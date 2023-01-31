@@ -1,0 +1,73 @@
+import React from 'react';
+import { Dimensions, I18nManager, Platform, } from 'react-native';
+
+import { NavigationContainer } from '@react-navigation/native';
+import HomeStack from './routes/HomeStack';
+import ClientConfiguration from './config/ClientConfiguration';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+import { Provider } from 'react-redux';
+import { store } from '../store';
+
+
+SplashScreen.preventAutoHideAsync()
+
+const windowWidth = Dimensions.get('window').width
+const windowHeight = Dimensions.get('window').height
+
+if (Platform.OS !== 'web') {
+  I18nManager.allowRTL(false)
+  I18nManager.forceRTL(false)
+  I18nManager.swapLeftAndRightInRTL(false)
+}
+
+export default function App() {
+
+
+  const config = {
+    screens: {
+      Home: '',
+      Table: 'table',
+    },
+  };
+
+  const linking = {
+    prefixes: ['http://localhost:19006', 'scrum://'],
+    config,
+  };
+
+  const [fontsLoaded] = useFonts({
+    'Rubik-200': require('../assets/fonts/Rubik/Rubik-Black.ttf'),
+    'Rubik-300': require('../assets/fonts/Rubik/Rubik-Light.ttf'),
+    'Rubik': require('../assets/fonts/Rubik/Rubik-Regular.ttf'),
+    'Rubik-500': require('../assets/fonts/Rubik/Rubik-Medium.ttf'),
+    'Rubik-600': require('../assets/fonts/Rubik/Rubik-SemiBold.ttf'),
+    'Rubik-700': require('../assets/fonts/Rubik/Rubik-Bold.ttf'),
+  })
+
+  const onLayoutRootView = React.useCallback(async () => {
+    if (fontsLoaded) {
+      console.log('fonts loaded')
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded])
+
+  onLayoutRootView()
+
+  if (!fontsLoaded) {
+    return null
+  }
+
+  return (
+    <Provider store={store}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer linking={linking}>
+          <HomeStack />
+        </NavigationContainer>
+        <ClientConfiguration />
+      </GestureHandlerRootView>
+    </Provider>
+  );
+}
