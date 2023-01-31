@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Dimensions, I18nManager, Platform, } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerProps, NavigationContainerRef } from '@react-navigation/native';
 import HomeStack from './routes/HomeStack';
 import ClientConfiguration from './config/ClientConfiguration';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
-import { Provider } from 'react-redux';
-import { store } from '../store';
+import { useDispatch } from 'react-redux';
+import { Dispatch } from '../store';
 
 
 SplashScreen.preventAutoHideAsync()
@@ -24,8 +23,19 @@ if (Platform.OS !== 'web') {
 }
 
 export default function App() {
+  const navigationContainerRef = useRef<NavigationContainerRef<{
+    Home: React.FC;
+    Table: React.FC;
+  }>>(null)
 
+  const dispatch = useDispatch<Dispatch>();
 
+  React.useEffect(() => {
+    if (navigationContainerRef.current) {
+      dispatch.room.init(navigationContainerRef.current)
+    }
+  }, [navigationContainerRef.current])
+  
   const config = {
     screens: {
       Home: '',
@@ -56,18 +66,12 @@ export default function App() {
 
   onLayoutRootView()
 
-  if (!fontsLoaded) {
-    return null
-  }
-
   return (
-    <Provider store={store}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer linking={linking}>
-          <HomeStack />
-        </NavigationContainer>
-        <ClientConfiguration />
-      </GestureHandlerRootView>
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer linking={linking} ref={navigationContainerRef}>
+        {fontsLoaded && <HomeStack />}
+      </NavigationContainer>
+      <ClientConfiguration />
+    </GestureHandlerRootView>
   );
 }

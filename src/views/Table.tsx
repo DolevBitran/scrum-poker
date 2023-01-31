@@ -5,16 +5,20 @@ import BottomSheet, { BottomSheetRefProps } from '../components/BottomSheet';
 import SEATS from '../seats';
 import { Guest } from '../../store/models/room.model';
 import { useTransition, animated, config, SpringValue } from '@react-spring/native';
+import { useSelector } from 'react-redux';
+import { getRoom } from '../../store/selectors/room.selector';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 
 export default function Table() {
-    const [guests, setGuests] = React.useState<Guest[]>([
-        { id: 'xxx', name: 'Dolev' },
-        { id: 'xxx1', name: 'Ori' },
-    ])
+    const room = useSelector(getRoom)
+    const guests = room.guests
+    // const [guests, setGuests] = React.useState<Guest[]>([
+    //     { id: 'xxx', name: 'Dolev' },
+    //     { id: 'xxx1', name: 'Ori' },
+    // ])
     const bottomSheetRef = React.useRef<BottomSheetRefProps>(null)
 
     bottomSheetRef.current?.scrollTo(0.3)

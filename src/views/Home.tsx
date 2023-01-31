@@ -35,10 +35,13 @@ export default function Home() {
     const animationRef = React.useRef<LottieRefCurrentProps | null>(null);
     const bottomSheetRef = React.useRef<BottomSheetRefProps>(null);
     const roomNameInputRef = React.useRef<TextInput>(null);
+    const joinRoomInputRef = React.useRef<TextInput>(null);
 
     const roomRef = React.useRef({
+        roomId: '',
         roomName: '',
-        options: {}
+        options: {},
+
     })
     const dispatch = useDispatch<Dispatch>()
 
@@ -49,11 +52,18 @@ export default function Home() {
     const snapPoints = [0, 0.5]
     const onCreateRoomPressed = () => bottomSheetRef.current && bottomSheetRef.current.scrollTo(snapPoints[1])
     const onSuccessfullyJoined = async (e: GestureResponderEvent) => {
-        if (roomRef.current.roomName) {
-            await dispatch.room.create({ roomName: roomRef.current.roomName, hostName: 'dolev', options: {} })
+        const { roomName, options } = roomRef.current
+        if (roomName) {
+            await dispatch.room.create({ roomName, hostName: 'dolev', options })
             // const roomId = await dispatch.room.create()
         }
-        navigation.dispatch(CommonActions.navigate({ name: HOME_ROUTES.TABLE }))
+        // navigation.dispatch(CommonActions.navigate({ name: HOME_ROUTES.TABLE }))
+    }
+    const onJoinRoom = async () => {
+        const { roomId } = roomRef.current
+        if (roomId) {
+            await dispatch.room.join({ roomId, guestName: 'dolev' })
+        }
     }
 
     const bodyScrollViewProps = {
@@ -74,10 +84,31 @@ export default function Home() {
         />
     </View>
 
+    const Join = () => <View style={{
+        width: windowWidth * 0.8,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'green',
+        alignSelf: 'center',
+        marginBottom: 30,
+        paddingVertical: 10
+    }}>
+        <View style={{ flexDirection: 'row' }}>
+            <View style={{ backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 2 }}>
+                <TextInput ref={joinRoomInputRef} onChangeText={text => roomRef.current.roomId = text} placeholder='Room ID' />
+            </View>
+            <TouchableOpacity onPress={onJoinRoom}>
+                <Text>Join</Text>
+            </TouchableOpacity>
+        </View>
+    </View>
+
     return (
         <View style={styles.container}>
             {/* Body */}
             <ScrollView {...bodyScrollViewProps} >
+                <Join />
                 <ActiveScrums />
                 <ScrumHistory onCreateRoomPressed={onCreateRoomPressed} />
             </ScrollView>
