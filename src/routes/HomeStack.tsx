@@ -37,6 +37,6 @@ export default function HomeStack() {
         }}>
             <Stack.Screen name={HOME_ROUTES.HOME} component={Home} />
             <Stack.Screen name={HOME_ROUTES.TABLE} component={Table} />
-        </Stack.Navigator >
+        </Stack.Navigator>
     );
 }

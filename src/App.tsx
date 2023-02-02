@@ -7,8 +7,8 @@ import ClientConfiguration from './config/ClientConfiguration';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useDispatch } from 'react-redux';
-import { Dispatch } from '../store';
+import { Provider, useDispatch } from 'react-redux';
+import { Dispatch, store } from '../store';
 
 
 SplashScreen.preventAutoHideAsync()
@@ -22,7 +22,15 @@ if (Platform.OS !== 'web') {
   I18nManager.swapLeftAndRightInRTL(false)
 }
 
-export default function App() {
+const WrappedApp = () => (
+  <Provider store={store}>
+    <App />
+  </Provider>
+)
+
+export default WrappedApp
+
+function App() {
   const navigationContainerRef = useRef<NavigationContainerRef<{
     Home: React.FC;
     Table: React.FC;
@@ -35,7 +43,7 @@ export default function App() {
       dispatch.room.init(navigationContainerRef.current)
     }
   }, [navigationContainerRef.current])
-  
+
   const config = {
     screens: {
       Home: '',

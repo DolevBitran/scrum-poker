@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Dimensions, LayoutChangeEvent, TouchableOpacity } from 'react-native';
 import Text from '../components/Text';
 import BottomSheet, { BottomSheetRefProps } from '../components/BottomSheet';
-import SEATS from '../seats';
+import SEATS from '../Seats';
 import { Guest } from '../../store/models/room.model';
 import { useTransition, animated, config, SpringValue } from '@react-spring/native';
 import { useSelector } from 'react-redux';

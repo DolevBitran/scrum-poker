@@ -37,8 +37,9 @@ export type RoomState = {
     id: string | null;
     name: string | null;
     guests: Guest[];
-    roundsHistory: Round[],
-    options: RoomOptions
+    roundsHistory: Round[];
+    options: RoomOptions;
+    guestName: string;
 }
 
 const INITIAL_STATE: RoomState = {
@@ -48,7 +49,8 @@ const INITIAL_STATE: RoomState = {
     name: null,
     guests: [],
     roundsHistory: [],
-    options: {}
+    options: {},
+    guestName: ''
 }
 
 type CreateRoomProps = {
@@ -58,7 +60,8 @@ type CreateRoomProps = {
 
 type JoinRoomProps = {
     id: RoomState['id'];
-    name: Guest['name'];
+    guestName: Guest['name'];
+    guestId?: Guest['id']
 }
 
 type initializeRoomProps = {
@@ -86,20 +89,22 @@ export const room: any = createModel<RootModel>()({
         APPEND_GUEST: (state: RoomState, payload: Guest): RoomState => ({ ...state, guests: [...state.guests, payload] }),
         REMOVE_GUEST: (state: RoomState, payload: Guest['id']): RoomState => ({ ...state, guests: state.guests.filter(guest => guest.id !== payload) }),
         SET_NAVIGATOR: (state: RoomState, payload: RoomState['navigator']): RoomState => ({ ...state, navigator: payload }),
+        SET_GUEST_NAME: (state: RoomState, payload: RoomState['guestName']): RoomState => ({ ...state, guestName: payload }),
     },
     effects: (dispatch: Dispatch) => ({
         async init(payload: RoomState['navigator'], state: RootModel) {
+            const guestName = await AsyncStorage.getItem('guest_name')
+
             this.SET_NAVIGATOR(payload)
+            this.SET_GUEST_NAME(guestName)
+
             return state.room.navigator
         },
-        async test(payload: RoomState['id']) {
-            await new Promise((resolve, reject) => {
-                setTimeout(resolve, 5000)
-            })
-            return 'success!'
-        },
         async create(payload: CreateRoomProps, state: RootModel) {
+            dispatch.room.setName(payload.hostName)
+
             const socket = state.room.socket || io("http://localhost:8001");
+
             socket.on('connect', () => {
                 console.log('connection successful')
                 this.SET_ROOM_SOCKET(socket)
@@ -108,7 +113,15 @@ export const room: any = createModel<RootModel>()({
             return state.room.id
         },
         async join(payload: JoinRoomProps, state: RootModel) {
+            dispatch.room.setName(payload.guestName)
+
+            const [[_, lastRoomId], [__, guestId]] = await AsyncStorage.multiGet(['room_id', 'guest_id'])
             const socket: Socket = state.room.socket || io("http://localhost:8001");
+
+            if (guestId && lastRoomId === payload.id) {
+                payload.guestId = guestId
+            }
+
             socket.on('connect', () => {
                 console.log('connection successful')
                 this.SET_ROOM_SOCKET(socket)
@@ -132,8 +145,6 @@ export const room: any = createModel<RootModel>()({
 
             const room_id = room.id
             const guest_id = room.guests[0].id
-            // const admin_secret = JSON.stringify(payload.admin_id)
-
             const room_data: [string, string][] = [
                 ['room_id', room_id],
                 ['guest_id', guest_id]
@@ -171,6 +182,10 @@ export const room: any = createModel<RootModel>()({
             }
         },
         onGuestLeave(payload: { roomId: Room['id'], guestId: Guest['id'] }, state: RootModel) {
+            console.log('guest_left', payload)
+            if (state.room.id === payload.roomId) {
+                this.REMOVE_GUEST(payload.guestId)
+            }
         },
         onVoteUpdate(payload: VoteProps, state: RootModel) {
 
@@ -181,6 +196,13 @@ export const room: any = createModel<RootModel>()({
         },
         onRoomClosed(payload: VoteProps, state: RootModel) {
 
+        },
+        async setName(payload: string, state: RootModel) {
+            if (state.room.guestName !== payload) {
+                await AsyncStorage.setItem('guest_name', payload)
+                this.SET_GUEST_NAME(payload)
+            }
+            return state.room.guestName
         },
     }),
 });

@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Dimensions, TouchableOpacity, TextInput, I18nManager, Platform, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import Header from '../components/Header';
 import Lottie from '../components/Lottie';
 import LottieView from 'lottie-react-native';
 import { LottieRef, LottieRefCurrentProps } from 'lottie-react';
@@ -20,6 +19,7 @@ import { HOME_ROUTES } from '../routes/HomeStack';
 import { GestureResponderEvent } from 'react-native';
 import { TextInputProps } from 'react-native';
 import { TextInputComponent } from 'react-native';
+import { getGuestName } from '../../store/selectors/room.selector';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -35,14 +35,25 @@ export default function Home() {
     const animationRef = React.useRef<LottieRefCurrentProps | null>(null);
     const bottomSheetRef = React.useRef<BottomSheetRefProps>(null);
     const roomNameInputRef = React.useRef<TextInput>(null);
+    const guestNameInputRef = React.useRef<TextInput>(null);
     const joinRoomInputRef = React.useRef<TextInput>(null);
 
     const roomRef = React.useRef({
         roomId: '',
         roomName: '',
+        guestName: '',
         options: {},
-
     })
+
+    const guestName = useSelector(getGuestName)
+
+    React.useEffect(() => {
+        if (guestName) {
+            roomRef.current.guestName = guestName
+        }
+    }, [guestName])
+
+
     const dispatch = useDispatch<Dispatch>()
 
     const { loading, success, error } = useSelector(
@@ -52,17 +63,17 @@ export default function Home() {
     const snapPoints = [0, 0.5]
     const onCreateRoomPressed = () => bottomSheetRef.current && bottomSheetRef.current.scrollTo(snapPoints[1])
     const onSuccessfullyJoined = async (e: GestureResponderEvent) => {
-        const { roomName, options } = roomRef.current
-        if (roomName) {
-            await dispatch.room.create({ roomName, hostName: 'dolev', options })
+        const { roomName, guestName, options } = roomRef.current
+        if (roomName && guestName) {
+            await dispatch.room.create({ roomName, hostName: guestName, options })
             // const roomId = await dispatch.room.create()
         }
         // navigation.dispatch(CommonActions.navigate({ name: HOME_ROUTES.TABLE }))
     }
     const onJoinRoom = async () => {
-        const { roomId } = roomRef.current
-        if (roomId) {
-            await dispatch.room.join({ roomId, guestName: 'dolev' })
+        const { roomId, guestName } = roomRef.current
+        if (roomId && guestName) {
+            await dispatch.room.join({ roomId, guestName })
         }
     }
 
@@ -94,9 +105,14 @@ export default function Home() {
         marginBottom: 30,
         paddingVertical: 10
     }}>
-        <View style={{ flexDirection: 'row' }}>
-            <View style={{ backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 2 }}>
-                <TextInput ref={joinRoomInputRef} onChangeText={text => roomRef.current.roomId = text} placeholder='Room ID' />
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+            <View>
+                <View style={{ backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 2, marginBottom: 10 }}>
+                    <TextInput defaultValue={guestName} ref={guestNameInputRef} onChangeText={text => roomRef.current.guestName = text} placeholder='Guest Name' />
+                </View>
+                <View style={{ backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 2 }}>
+                    <TextInput ref={joinRoomInputRef} onChangeText={text => roomRef.current.roomId = text} placeholder='Room ID' />
+                </View>
             </View>
             <TouchableOpacity onPress={onJoinRoom}>
                 <Text>Join</Text>
@@ -125,7 +141,13 @@ export default function Home() {
                                     style={[styles.textInput, Platform.select({
                                         web: { outlineWidth: 0 },
                                     })]} />
+
                             </View>
+
+                            <View style={{ backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 2, marginBottom: 10 }}>
+                                <TextInput defaultValue={guestName} onChangeText={text => roomRef.current.guestName = text} placeholder='Guest Name' />
+                            </View>
+
                             <Text style={styles.textInput}>Cards styles</Text>
                             <Text style={styles.textInput}>Show average</Text>
                             <Text style={styles.textInput}>Show score</Text>

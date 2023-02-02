@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Dimensions, StyleSheet, Text } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
-import { HOME_ROUTES } from '../../routes/HomeStack';
 import { getRoom } from '../../../store/selectors/room.selector';
 import { useSelector } from 'react-redux';
 
@@ -19,7 +18,7 @@ const Header: React.FC<IHeaderProps> = ({ }) => {
 
     const HeaderText = React.useMemo(() => {
         switch (true) {
-            case route.name === HOME_ROUTES.TABLE:
+            case route.name === 'Table':
                 return `${room.name} -- ${room.id}`
             default:
                 return 'Scrum Poker'

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { iRootState } from '..'
-import { Room } from '../models/room.model'
+import { Room, RoomState } from '../models/room.model'
 
 
 export const getRoom = (state: iRootState): Room => ({
@@ -10,6 +10,8 @@ export const getRoom = (state: iRootState): Room => ({
     roundsHistory: state.room.roundsHistory,
     options: state.room.options
 })
+
+export const getGuestName = (state: iRootState): RoomState['guestName'] => state.room.guestName
 
 
 // chained selector example

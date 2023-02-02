@@ -3,18 +3,18 @@ import { models, RootModel } from './models';
 import { Middleware } from 'redux'
 import loadingPlugin, { ExtraModelsFromLoading } from '@rematch/loading';
 
-const allowedActionWithoutRoom = [
-   'room/join',
-   'room/create',
-   'room/test'
-]
+// const allowedActionWithoutRoom = [
+//    'room/join',
+//    'room/create',
+//    'room/test'
+// ]
 
-const customMiddleware: Middleware<{}, RootModel> = store => next => action => {
-   if (!allowedActionWithoutRoom.includes(action.type) && !store.getState().room.id) {
-      console.log('Room is need to be created first.', store.getState())
-   }
-   return next(action)
-}
+// const customMiddleware: Middleware<{}, RootModel> = store => next => action => {
+//    if (!allowedActionWithoutRoom.includes(action.type) && !store.getState().room.id) {
+//       console.log('Room is need to be created first.', store.getState())
+//    }
+//    return next(action)
+// }
 
 type FullModel = ExtraModelsFromLoading<RootModel, { type: 'full' }>
 
