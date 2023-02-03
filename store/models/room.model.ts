@@ -6,6 +6,7 @@ import io, { Socket } from 'socket.io-client';
 import { Dispatch } from '..';
 import { CommonActions, NavigationContainerProps, NavigationContainerRef } from '@react-navigation/native';
 import { HOME_ROUTES } from '../../src/routes/HomeStack';
+import Status from '../../src/classes/Status';
 
 // const socket = io('http://localhost:4000');
 
@@ -58,10 +59,24 @@ type CreateRoomProps = {
     roomName: string;
 }
 
-type JoinRoomProps = {
+export type JoinRoomProps = {
     id: RoomState['id'];
     guestName: Guest['name'];
     guestId?: Guest['id']
+}
+
+export type CreateRoomResponse = {
+    id: Room['id'];
+    hostId: string;
+    admin_secret?: string;
+    room: Room
+}
+
+export type JoinRoomResponse = {
+    id: Room['id'];
+    hostId: Guest['id'];
+    admin_secret?: string;
+    room: Room;
 }
 
 type initializeRoomProps = {
@@ -94,54 +109,40 @@ export const room: any = createModel<RootModel>()({
     effects: (dispatch: Dispatch) => ({
         async init(payload: RoomState['navigator'], state: RootModel) {
             const guestName = await AsyncStorage.getItem('guest_name')
-
             this.SET_NAVIGATOR(payload)
             this.SET_GUEST_NAME(guestName)
 
             return state.room.navigator
         },
         async create(payload: CreateRoomProps, state: RootModel) {
-            dispatch.room.setName(payload.hostName)
-
-            const socket = state.room.socket || io("http://localhost:8001");
-
-            socket.on('connect', () => {
-                console.log('connection successful')
-                this.SET_ROOM_SOCKET(socket)
-                socket.emit('create_room', payload, dispatch.room.onCreated)
-            })
-            return state.room.id
+            try {
+                dispatch.room.setName(payload.hostName)
+                const response = await Status.createRoom(payload)
+                await dispatch.room.initializeRoom(response)
+                return state.room.id
+            } catch (err) {
+                console.error(err)
+            }
         },
         async join(payload: JoinRoomProps, state: RootModel) {
-            dispatch.room.setName(payload.guestName)
+            try {
+                const [[_, lastRoomId], [__, guestId]] = await AsyncStorage.multiGet(['room_id', 'guest_id'])
+                if (guestId && lastRoomId === payload.id) {
+                    payload.guestId = guestId
+                }
 
-            const [[_, lastRoomId], [__, guestId]] = await AsyncStorage.multiGet(['room_id', 'guest_id'])
-            const socket: Socket = state.room.socket || io("http://localhost:8001");
-
-            if (guestId && lastRoomId === payload.id) {
-                payload.guestId = guestId
+                dispatch.room.setName(payload.guestName)
+                const response = await Status.joinRoom(payload)
+                await dispatch.room.initializeRoom({ room: response.room })
+                return state.room.id
+            } catch (err) {
+                console.error(err)
             }
-
-            socket.on('connect', () => {
-                console.log('connection successful')
-                this.SET_ROOM_SOCKET(socket)
-                socket.emit('join_room', payload, dispatch.room.onJoined)
-            })
-            return state.room.id
         },
         async initializeRoom(payload: initializeRoomProps, state: RootModel) {
             const { room, admin_secret } = payload
             console.log('initializing room', { room, admin_secret })
             this.SET_ROOM(room)
-
-            state.room.navigator.dispatch(CommonActions.navigate({ name: HOME_ROUTES.TABLE }))
-
-            state.room.socket.on('guest_joined', dispatch.room.onGuestJoined)
-            state.room.socket.on('guest_left', dispatch.room.onGuestLeave)
-            // state.room.socket.on('room:vote', dispatch.room.onVoteUpdate)
-            // state.room.socket.on('room:next', dispatch.room.onNextRound)
-            // state.room.socket.on('room:options', dispatch.room.optionsChanged)
-            // state.room.socket.on('room:close', dispatch.room.roomDismissed)
 
             const room_id = room.id
             const guest_id = room.guests[0].id
@@ -154,6 +155,7 @@ export const room: any = createModel<RootModel>()({
                 room_data.push(['admin_secret', admin_secret])
             }
             await AsyncStorage.multiSet(room_data)
+            state.room.navigator.dispatch(CommonActions.navigate({ name: HOME_ROUTES.TABLE }))
         },
         async vote(payload: VoteProps, state: RootModel) {
             try {
@@ -164,16 +166,6 @@ export const room: any = createModel<RootModel>()({
                 throw err
             }
             return true
-        },
-        onCreated(payload: { id: Room['id'], hostId: string, admin_secret?: string, room: Room }, state: RootModel) {
-            // const { room, admin_secret, hostId } = payload
-            // id, name, guests, adminId, roundsHistory, options
-            console.log('room_created', payload)
-            dispatch.room.initializeRoom({ room: payload.room, admin_secret: payload.hostId })
-        },
-        onJoined(payload: { hostId: string, guestId: string, room: Room }, state: RootModel) {
-            console.log('room_joined', payload)
-            dispatch.room.initializeRoom({ room: payload.room })
         },
         onGuestJoined(payload: { roomId: Room['id'], guest: Guest }, state: RootModel) {
             console.log('guest_joined', payload)
@@ -191,6 +183,7 @@ export const room: any = createModel<RootModel>()({
 
         },
         onNextRound(payload: VoteProps, state: RootModel) {
+
         },
         onOptionsChanged(payload: VoteProps, state: RootModel) {
         },
