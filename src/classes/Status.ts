@@ -1,18 +1,21 @@
 import io, { Socket } from 'socket.io-client';
 import { store } from '../../store';
-import { CreateRoomResponse, JoinRoomProps, JoinRoomResponse, Room } from '../../store/models/room.model';
-
-interface CreateRoomProps {
-
-}
 
 const uri = 'http://localhost:8001'
 
 class Status {
     static status: Socket;
+    static Events: StatusEvent[] = [
+        { name: 'guest_joined', handler: store.dispatch.room.onGuestJoined },
+        { name: 'guest_left', handler: store.dispatch.room.onGuestLeave },
+        // { name: 'room:vote', handler: store.dispatch.room.onVoteUpdate },
+        // { name: 'room:next', handler: store.dispatch.room.onNextRound },
+        // { name: 'room:options', handler: store.dispatch.room.optionsChanged },
+        // { name: 'room:close', handler: store.dispatch.room.roomDismissed },
+    ]
 
     constructor(status: Socket) {
-        Status.status = status
+        // Status.status = status
     }
 
     static connect() {
@@ -58,17 +61,26 @@ class Status {
         })
     }
 
+    static closeRoom(payload: CloseRoomProps) {
+        return new Promise<CloseRoomResponse>(async (resolve, reject) => {
+            const status = await this.connect()
+            const callback = (response: CloseRoomResponse) => {
+                console.log('room_closed', response)
+                this.unsubscribe(status)
+                resolve(response)
+            }
 
-    static subscribe(status: Socket) {
-        status.on('guest_joined', store.dispatch.room.onGuestJoined)
-        status.on('guest_left', store.dispatch.room.onGuestLeave)
-        // status.on('room:vote', dispatch.room.onVoteUpdate)
-        // status.on('room:next', dispatch.room.onNextRound)
-        // status.on('room:options', dispatch.room.optionsChanged)
-        // status.on('room:close', dispatch.room.roomDismissed)
+            status.emit('close_room', payload, callback)
+        })
     }
 
+    static subscribe(status: Socket) {
+        Status.Events.forEach((event: StatusEvent) => status.on(event.name, event.handler))
+    }
 
+    static unsubscribe(status: Socket) {
+        Status.Events.forEach((event: StatusEvent) => status.off(event.name))
+    }
 
 }
 

@@ -8,41 +8,6 @@ import { CommonActions, NavigationContainerProps, NavigationContainerRef } from 
 import { HOME_ROUTES } from '../../src/routes/HomeStack';
 import Status from '../../src/classes/Status';
 
-// const socket = io('http://localhost:4000');
-
-export type Guest = {
-    id: string;
-    name: string;
-}
-
-export type Vote = number
-
-export type Round = {
-    [guestId: string]: Vote
-}
-
-export type RoomOptions = {
-}
-
-export type Room = {
-    id: string;
-    name: string;
-    guests: Guest[];
-    roundsHistory: Round[],
-    options: RoomOptions;
-}
-
-export type RoomState = {
-    navigator: NavigationContainerRef<{ Home: unknown; Table: unknown; }> | null;
-    socket: Socket | null;
-    id: string | null;
-    name: string | null;
-    guests: Guest[];
-    roundsHistory: Round[];
-    options: RoomOptions;
-    guestName: string;
-}
-
 const INITIAL_STATE: RoomState = {
     navigator: null,
     socket: null,
@@ -52,40 +17,6 @@ const INITIAL_STATE: RoomState = {
     roundsHistory: [],
     options: {},
     guestName: ''
-}
-
-type CreateRoomProps = {
-    hostName: string;
-    roomName: string;
-}
-
-export type JoinRoomProps = {
-    id: RoomState['id'];
-    guestName: Guest['name'];
-    guestId?: Guest['id']
-}
-
-export type CreateRoomResponse = {
-    id: Room['id'];
-    hostId: string;
-    admin_secret?: string;
-    room: Room
-}
-
-export type JoinRoomResponse = {
-    id: Room['id'];
-    hostId: Guest['id'];
-    admin_secret?: string;
-    room: Room;
-}
-
-type initializeRoomProps = {
-    room: Room;
-    admin_secret: string;
-}
-
-type VoteProps = {
-
 }
 
 export const room: any = createModel<RootModel>()({
