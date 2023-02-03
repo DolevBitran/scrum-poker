@@ -5,14 +5,7 @@ const uri = 'http://localhost:8001'
 
 class Status {
     static status: Socket;
-    static Events: StatusEvent[] = [
-        { name: 'guest_joined', handler: store.dispatch.room.onGuestJoined },
-        { name: 'guest_left', handler: store.dispatch.room.onGuestLeave },
-        // { name: 'room:vote', handler: store.dispatch.room.onVoteUpdate },
-        // { name: 'room:next', handler: store.dispatch.room.onNextRound },
-        // { name: 'room:options', handler: store.dispatch.room.optionsChanged },
-        // { name: 'room:close', handler: store.dispatch.room.roomDismissed },
-    ]
+    static Events: StatusEvent[];
 
     constructor(status: Socket) {
         // Status.status = status
@@ -26,11 +19,14 @@ class Status {
 
             const status = io(uri)
             status.on('connect', () => {
+
                 console.log('connection successful')
                 this.status = status
                 resolve(status)
             })
         })
+
+
     }
 
 
@@ -75,11 +71,20 @@ class Status {
     }
 
     static subscribe(status: Socket) {
-        Status.Events.forEach((event: StatusEvent) => status.on(event.name, event.handler))
+        this.Events = [
+            { name: 'guest_joined', handler: store.dispatch.room.onGuestJoined },
+            { name: 'guest_left', handler: store.dispatch.room.onGuestLeave },
+            // { name: 'room:vote', handler: store.dispatch.room.onVoteUpdate },
+            // { name: 'room:next', handler: store.dispatch.room.onNextRound },
+            // { name: 'room:options', handler: store.dispatch.room.optionsChanged },
+            // { name: 'room:close', handler: store.dispatch.room.roomDismissed },
+        ]
+
+        this.Events.forEach((event: StatusEvent) => status.on(event.name, event.handler))
     }
 
     static unsubscribe(status: Socket) {
-        Status.Events.forEach((event: StatusEvent) => status.off(event.name))
+        this.Events.forEach((event: StatusEvent) => status.off(event.name))
     }
 
 }
