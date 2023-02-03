@@ -1,25 +1,23 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, LayoutChangeEvent, TouchableOpacity } from 'react-native';
 import Text from '../components/Text';
-import BottomSheet, { BottomSheetRefProps } from '../components/BottomSheet';
+import BottomSheet from '../components/BottomSheet';
 import SEATS from '../Seats';
 import { Guest } from '../../store/models/room.model';
 import { useTransition, animated, config, SpringValue } from '@react-spring/native';
 import { useSelector } from 'react-redux';
 import { getRoom } from '../../store/selectors/room.selector';
+import { BottomSheetRefProps } from '../components/BottomSheet/BottomSheet';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 
 export default function Table() {
+    const bottomSheetRef = React.useRef<BottomSheetRefProps>(null)
+    
     const room = useSelector(getRoom)
     const guests = room.guests
-    // const [guests, setGuests] = React.useState<Guest[]>([
-    //     { id: 'xxx', name: 'Dolev' },
-    //     { id: 'xxx1', name: 'Ori' },
-    // ])
-    const bottomSheetRef = React.useRef<BottomSheetRefProps>(null)
 
     bottomSheetRef.current?.scrollTo(0.3)
     const [size, setSize] = React.useState<{ width: number, height: number }>({ width: 0, height: 0 })
@@ -36,13 +34,6 @@ export default function Table() {
             setSize({ width, height })
         }
     };
-
-    // React.useEffect(() => {
-    //     // test guests array changes 
-    //     setInterval(() => {
-    //         setGuests(state => state.filter((item, i) => i !== state.length - 1))
-    //     }, 2000)
-    // }, [])
 
     const UserElement = ({ guest, controller, index, style }: { guest: Guest, index: number, style: { opacity: SpringValue<number> } }) => {
         const pos = SEATS[Math.max(guests.length, index + 1)][index]
@@ -83,9 +74,6 @@ export default function Table() {
                 {transitions((style, guest, controller, index) => <UserElement style={style} guest={guest} controller={controller} index={index} />)}
             </View>
             <BottomSheet ref={bottomSheetRef} snapPoints={[0.2, 0.3, 1]}>
-                <TouchableOpacity onPress={() => setGuests(state => [...state, { id: 'xxx', name: 'Ori' }])}>
-                    <Text>add Guest</Text>
-                </TouchableOpacity>
             </BottomSheet>
         </View >
     );

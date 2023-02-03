@@ -1,4 +1,3 @@
-import BottomSheet, { BottomSheetRefProps } from "./BottomSheet";
+import BottomSheet from "./BottomSheet";
 
 export default BottomSheet;
-export { BottomSheetRefProps };

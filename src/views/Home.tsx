@@ -1,24 +1,20 @@
 import React from 'react';
-import { useSpring, useSpringRef, animated, SpringRef } from '@react-spring/native';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Dimensions, TouchableOpacity, TextInput, I18nManager, Platform, ScrollView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 
 import Lottie from '../components/Lottie';
-import LottieView from 'lottie-react-native';
-import { LottieRef, LottieRefCurrentProps } from 'lottie-react';
+import { LottieRefCurrentProps } from 'lottie-react';
 
 import Text from '../components/Text';
-import BottomSheet, { BottomSheetRefProps } from '../components/BottomSheet';
+import BottomSheet from '../components/BottomSheet';
+import { BottomSheetRefProps } from '../components/BottomSheet/BottomSheet';
+
 import ActiveScrums from '../components/ActiveScrums';
 import ScrumHistory from '../components/ScrumHistory';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch, iRootState } from '../../store';
-import { HOME_ROUTES } from '../routes/HomeStack';
 import { GestureResponderEvent } from 'react-native';
-import { TextInputProps } from 'react-native';
-import { TextInputComponent } from 'react-native';
 import { getGuestName } from '../../store/selectors/room.selector';
 
 const windowWidth = Dimensions.get('window').width;
