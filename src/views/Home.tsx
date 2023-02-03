@@ -57,14 +57,13 @@ export default function Home() {
     )
 
     const snapPoints = [0, 0.5]
-    const onCreateRoomPressed = () => bottomSheetRef.current && bottomSheetRef.current.scrollTo(snapPoints[1])
-    const onSuccessfullyJoined = async (e: GestureResponderEvent) => {
+    const onCreateButtonPressed = () => bottomSheetRef.current && bottomSheetRef.current.scrollTo(snapPoints[1])
+    const onCreateRoomSubmit = async (e: GestureResponderEvent) => {
         const { roomName, guestName, options } = roomRef.current
         if (roomName && guestName) {
             await dispatch.room.create({ roomName, hostName: guestName, options })
             // const roomId = await dispatch.room.create()
         }
-        // navigation.dispatch(CommonActions.navigate({ name: HOME_ROUTES.TABLE }))
     }
     const onJoinRoom = async () => {
         const { roomId, guestName } = roomRef.current
@@ -122,7 +121,7 @@ export default function Home() {
             <ScrollView {...bodyScrollViewProps} >
                 <Join />
                 <ActiveScrums />
-                <ScrumHistory onCreateRoomPressed={onCreateRoomPressed} />
+                <ScrumHistory onCreateRoomPressed={onCreateButtonPressed} />
             </ScrollView>
             <BottomSheet ref={bottomSheetRef} snapPoints={snapPoints}>
                 <View style={{ width: '80%', alignSelf: 'center' }}>
@@ -147,7 +146,7 @@ export default function Home() {
                             <Text style={styles.textInput}>Cards styles</Text>
                             <Text style={styles.textInput}>Show average</Text>
                             <Text style={styles.textInput}>Show score</Text>
-                            <TouchableOpacity style={styles.createButton} onPress={onSuccessfullyJoined}>
+                            <TouchableOpacity style={styles.createButton} onPress={onCreateRoomSubmit}>
                                 <Text style={styles.createText}>Create</Text>
                             </TouchableOpacity>
                         </>}

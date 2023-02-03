@@ -9,46 +9,52 @@ interface CreateRoomProps {
 const uri = 'http://localhost:8001'
 
 class Status {
-    socket: Socket;
+    static status: Socket;
+
     constructor(status: Socket) {
-        this.socket = status
+        Status.status = status
     }
 
+    static connect() {
+        return new Promise<Socket>((resolve, reject) => {
+            if (this.status && this.status.connected) {
+                resolve(this.status)
+            }
 
-    static async createRoom(payload: CreateRoomProps) {
-        return new Promise<CreateRoomResponse>((resolve, reject) => {
             const status = io(uri)
-
             status.on('connect', () => {
                 console.log('connection successful')
-
-                const callback = (response: CreateRoomResponse) => {
-                    console.log('room_created', response)
-                    this.subscribe(status)
-                    resolve(response)
-                }
-
-                status.emit('create_room', payload, callback)
+                this.status = status
+                resolve(status)
             })
         })
     }
 
 
-    static async joinRoom(payload: JoinRoomProps) {
-        return new Promise<JoinRoomResponse>((resolve, reject) => {
-            const status = io(uri)
+    static createRoom(payload: CreateRoomProps) {
+        return new Promise<CreateRoomResponse>(async (resolve, reject) => {
+            const status = await this.connect()
+            const callback = (response: CreateRoomResponse) => {
+                console.log('room_created', response)
+                this.subscribe(status)
+                resolve(response)
+            }
 
-            status.on('connect', () => {
-                console.log('connection successful')
+            status.emit('create_room', payload, callback)
+        })
+    }
 
-                const callback = (response: JoinRoomResponse) => {
-                    console.log('room_joined', response)
-                    this.subscribe(status)
-                    resolve(response)
-                }
 
-                status.emit('join_room', payload, callback)
-            })
+    static joinRoom(payload: JoinRoomProps) {
+        return new Promise<JoinRoomResponse>(async (resolve, reject) => {
+            const status = await this.connect()
+            const callback = (response: JoinRoomResponse) => {
+                console.log('room_joined', response)
+                this.subscribe(status)
+                resolve(response)
+            }
+
+            status.emit('join_room', payload, callback)
         })
     }
 
