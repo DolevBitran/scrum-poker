@@ -4,83 +4,80 @@ import { store } from '../../store';
 const uri = 'http://localhost:8001'
 
 class SocketManager {
-    static status: Socket;
-    static Events: StatusEvent[];
+    static socket: Socket;
+    static Events: SocketEvent[];
 
     static connect() {
         return new Promise<Socket>((resolve, reject) => {
-            if (this.status && this.status.connected) {
-                return resolve(this.status)
+            if (this.socket && this.socket.connected) {
+                return resolve(this.socket)
             }
 
-            const status = io(uri)
-            status.on('connect', () => {
-
+            const socket = io(uri)
+            socket.on('connect', () => {
                 console.log('connection successful')
-                this.status = status
-                resolve(status)
+                this.socket = socket
+                resolve(socket)
             })
         })
-
-
     }
 
 
     static createRoom(payload: CreateRoomProps) {
         return new Promise<CreateRoomResponse>(async (resolve, reject) => {
-            const status = await this.connect()
+            const socket = await this.connect()
             const callback = (response: CreateRoomResponse) => {
                 console.log('room_created', response)
-                this.subscribe(status)
+                this.subscribe(socket)
                 resolve(response)
             }
 
-            status.emit('create_room', payload, callback)
+            socket.emit('create_room', payload, callback)
         })
     }
 
 
     static joinRoom(payload: JoinRoomProps) {
         return new Promise<JoinRoomResponse>(async (resolve, reject) => {
-            const status = await this.connect()
+            const socket = await this.connect()
             const callback = (response: JoinRoomResponse) => {
                 console.log('room_joined', response)
-                this.subscribe(status)
+                this.subscribe(socket)
                 resolve(response)
             }
 
-            status.emit('join_room', payload, callback)
+            socket.emit('join_room', payload, callback)
         })
     }
 
     static closeRoom(payload: CloseRoomProps) {
         return new Promise<CloseRoomResponse>(async (resolve, reject) => {
-            const status = await this.connect()
+            const socket = await this.connect()
             const callback = (response: CloseRoomResponse) => {
                 console.log('room_closed', response)
-                this.unsubscribe(status)
+                this.unsubscribe(socket)
                 resolve(response)
             }
 
-            status.emit('close_room', payload, callback)
+            socket.emit('close_room', payload, callback)
         })
     }
 
 
     static async vote(payload: VoteProps) {
         return new Promise<VoteResponse>(async (resolve, reject) => {
-            const status = await this.connect()
+            const socket = await this.connect()
             const callback = (response: VoteResponse) => {
                 console.log('vote', { payload, response })
                 resolve(response)
             }
 
-            status.emit('vote', payload, callback)
+            socket.emit('vote', payload, callback)
         })
 
     }
 
-    static subscribe(status: Socket) {
+    static subscribe(socket: Socket) {
         this.Events = [
             { name: 'guest_joined', handler: store.dispatch.room.onGuestJoined },
             { name: 'guest_left', handler: store.dispatch.room.onGuestLeave },
@@ -90,11 +87,11 @@ class SocketManager {
             // { name: 'room_closed', handler: store.dispatch.room.roomDismissed },
         ]
 
-        this.Events.forEach((event: StatusEvent) => status.on(event.name, event.handler))
+        this.Events.forEach((event: SocketEvent) => socket.on(event.name, event.handler))
     }
 
-    static unsubscribe(status: Socket) {
-        this.Events.forEach((event: StatusEvent) => status.off(event.name))
+    static unsubscribe(socket: Socket) {
+        this.Events.forEach((event: SocketEvent) => socket.off(event.name))
     }
 
 }

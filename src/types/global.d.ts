@@ -5,7 +5,7 @@ export { };
 
 declare global {
 
-    type StatusEvent = {
+    type SocketEvent = {
         name: string;
         handler: () => unknown;
     }
