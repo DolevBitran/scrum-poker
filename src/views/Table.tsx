@@ -3,20 +3,21 @@ import { StyleSheet, View, Dimensions, LayoutChangeEvent, TouchableOpacity } fro
 import Text from '../components/Text';
 import BottomSheet from '../components/BottomSheet';
 import SEATS from '../Seats';
-import { Guest } from '../../store/models/room.model';
+import { Card, Guest } from '../../store/models/room.model';
 import { useTransition, animated, config, SpringValue } from '@react-spring/native';
-import { useSelector } from 'react-redux';
-import { getRoom } from '../../store/selectors/room.selector';
 import { BottomSheetRefProps } from '../components/BottomSheet/BottomSheet';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { getDeck, getRoom, getSelectedCardIndex } from '../../store/selectors/room.selector';
+import { Dispatch } from '../../store';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 
 export default function Table() {
     const bottomSheetRef = React.useRef<BottomSheetRefProps>(null)
-    
+    const dispatch = useDispatch<Dispatch>()
     const room = useSelector(getRoom)
+    const roomSelectedCardIndex = useSelector(getSelectedCardIndex)
     const guests = room.guests
 
     bottomSheetRef.current?.scrollTo(0.3)
@@ -35,7 +36,7 @@ export default function Table() {
         }
     };
 
-    const UserElement = ({ guest, controller, index, style }: { guest: Guest, index: number, style: { opacity: SpringValue<number> } }) => {
+    const UserElement = ({ guest, controller, index, style }: { guest: Guest, controller: any, index: number, style: { opacity: SpringValue<number> } }) => {
         const pos = SEATS[Math.max(guests.length, index + 1)][index]
 
         const [transform] = React.useState([
@@ -61,6 +62,32 @@ export default function Table() {
         </animated.View>
     }
 
+    const onVote = async (voteValue: number) => {
+        dispatch.room.vote(voteValue);
+
+    }
+    const CardsContainer = () => {
+        const deck = useSelector(getDeck)
+        if (!deck) {
+            return null
+        }
+        const cards = deck.map((card: Card, index: number) => {
+            const selectedCardStyle = index === roomSelectedCardIndex ? styles.selectedCard : null
+            return (
+                <View style={{ width: windowWidth / 5 }} key={index}>
+                    <TouchableOpacity style={[{ padding: 20, backgroundColor: "orange" }, selectedCardStyle]} onPress={() => onVote(index)} >
+                        <Text>{card.displayName}</Text>
+                    </TouchableOpacity>
+                </View>
+            )
+        })
+        return (
+            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: "space-around", flexWrap: 'wrap' }}>
+                {cards}
+            </View>
+        )
+
+    }
     return (
         <View style={styles.container}>
             <View style={styles.table}>
@@ -74,6 +101,7 @@ export default function Table() {
                 {transitions((style, guest, controller, index) => <UserElement style={style} guest={guest} controller={controller} index={index} />)}
             </View>
             <BottomSheet ref={bottomSheetRef} snapPoints={[0.2, 0.3, 1]}>
+                <CardsContainer />
             </BottomSheet>
         </View >
     );
@@ -160,6 +188,10 @@ const styles = StyleSheet.create({
     userScore: {
         fontSize: windowHeight * 0.02,
         color: '#4B536A',
+    },
+    selectedCard: {
+        borderWidth: 2,
+        borderColor: 'green'
     }
 });
 
