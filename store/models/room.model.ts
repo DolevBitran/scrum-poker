@@ -1,10 +1,8 @@
-import { createModel, RematchDispatch } from '@rematch/core';
-// import { POST } from '../../service/api';
+import { createModel } from '@rematch/core';
 import { RootModel } from './index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import io, { Socket } from 'socket.io-client';
 import { Dispatch } from '..';
-import { CommonActions, NavigationContainerProps, NavigationContainerRef } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import { HOME_ROUTES } from '../../src/routes/HomeStack';
 import SocketManager from '../../src/services/SocketManager';
 

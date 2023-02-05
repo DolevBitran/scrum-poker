@@ -88,10 +88,10 @@ class SocketManager {
         this.Events = [
             { name: 'guest_joined', handler: store.dispatch.room.onGuestJoined },
             { name: 'guest_left', handler: store.dispatch.room.onGuestLeave },
-            // { name: 'room:vote', handler: store.dispatch.room.onVoteUpdate },
-            // { name: 'room:next', handler: store.dispatch.room.onNextRound },
-            // { name: 'room:options', handler: store.dispatch.room.optionsChanged },
-            // { name: 'room:close', handler: store.dispatch.room.roomDismissed },
+            // { name: 'room_vote', handler: store.dispatch.room.onVoteUpdate },
+            // { name: 'next_round', handler: store.dispatch.room.onNextRound },
+            // { name: 'options_changed', handler: store.dispatch.room.optionsChanged },
+            // { name: 'room_closed', handler: store.dispatch.room.roomDismissed },
         ]
 
         this.Events.forEach((event: StatusEvent) => status.on(event.name, event.handler))
