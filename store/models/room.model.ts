@@ -107,7 +107,7 @@ export const room: any = createModel<RootModel>()({
         async vote(payload: VoteProps, state: RootModel) {
             try {
                 this.SET_SELECTED_CARD_INDEX(payload);
-                SocketManager.vote(payload);
+                await SocketManager.vote(payload);
             } catch (err) {
                 console.error(err);
                 throw err;

@@ -7,14 +7,10 @@ class SocketManager {
     static status: Socket;
     static Events: StatusEvent[];
 
-    constructor(status: Socket) {
-        // Status.status = status
-    }
-
     static connect() {
         return new Promise<Socket>((resolve, reject) => {
             if (this.status && this.status.connected) {
-                resolve(this.status)
+                return resolve(this.status)
             }
 
             const status = io(uri)
