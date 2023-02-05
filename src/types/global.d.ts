@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client";
 export { };
 
 declare global {
-    
+
     type StatusEvent = {
         name: string;
         handler: () => unknown;
@@ -41,6 +41,7 @@ declare global {
         roundsHistory: Round[];
         options: RoomOptions;
         guestName: string;
+        selectedCardIndex: number | null;
     }
 
     // ==================== PAYLOADS ====================
@@ -65,7 +66,8 @@ declare global {
     }
 
     type VoteProps = {
-
+        roomId: string;
+        value: number;
     }
 
     // ==================== RESPONSES ====================
@@ -85,6 +87,10 @@ declare global {
     }
 
     type CloseRoomResponse = {
+    }
+
+    type VoteResponse = {
+        success: boolean
     }
 
 }

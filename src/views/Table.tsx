@@ -62,10 +62,10 @@ export default function Table() {
         </animated.View>
     }
 
-    const onVote = async (voteValue: number) => {
-        dispatch.room.vote(voteValue);
-
+    const onVote = async (value: number) => {
+        dispatch.room.vote({ roomId: room.id, value });
     }
+    
     const CardsContainer = () => {
         const deck = useSelector(getDeck)
         if (!deck) {

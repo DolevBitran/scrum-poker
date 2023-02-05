@@ -3,7 +3,7 @@ import { store } from '../../store';
 
 const uri = 'http://localhost:8001'
 
-class Status {
+class SocketManager {
     static status: Socket;
     static Events: StatusEvent[];
 
@@ -70,6 +70,20 @@ class Status {
         })
     }
 
+
+    static async vote(payload: VoteProps) {
+        return new Promise<VoteResponse>(async (resolve, reject) => {
+            const status = await this.connect()
+            const callback = (response: VoteResponse) => {
+                console.log('vote', { payload, response })
+                resolve(response)
+            }
+
+            status.emit('vote', payload, callback)
+        })
+
+    }
+
     static subscribe(status: Socket) {
         this.Events = [
             { name: 'guest_joined', handler: store.dispatch.room.onGuestJoined },
@@ -89,4 +103,4 @@ class Status {
 
 }
 
-export default Status
+export default SocketManager
