@@ -4,6 +4,7 @@ import { Entypo } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { getRoom } from '../../../store/selectors/room.selector';
 import { useSelector } from 'react-redux';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -18,18 +19,32 @@ const Header: React.FC<IHeaderProps> = ({ }) => {
 
     const HeaderText = React.useMemo(() => {
         switch (true) {
-            case route.name === 'Table':
+            case route.name === 'Room':
                 return `${room.name} -- ${room.id}`
             default:
                 return 'Scrum Poker'
         }
-    }, [route.name])
+    }, [route.name, room])
+
+    const onPress = () => {
+        console.log('onPress')
+        if (room.id) {
+            navigator.clipboard.writeText(room.id);
+        }
+    }
+
+    const onLongPress = () => {
+        console.log('onLongPress')
+        // @TODO: Open share menu
+    }
 
     return (
         <View style={styles.wrapper} >
             <View style={styles.container}>
                 <Entypo style={styles.menuIcon} name="menu" size={24} color="black" />
-                <Text>{HeaderText}</Text>
+                <TouchableOpacity onPress={onPress} onLongPress={onLongPress}>
+                    <Text>{HeaderText}</Text>
+                </TouchableOpacity>
                 <Text style={{ flex: 1, textAlign: 'right' }}>ACTION 2</Text>
             </View>
         </View>
@@ -42,7 +57,7 @@ export { Header };
 const styles = StyleSheet.create({
     wrapper: {
         height: 130,
-        width: windowWidth,
+        width: '100%',
         paddingHorizontal: 40,
         justifyContent: 'center',
         backgroundColor: '#fff'
@@ -54,7 +69,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     textWrapper: {
-        width: windowWidth * 0.8,
+        width: '80%',
         justifyContent: 'center',
         height: 50,
         borderRadius: 20,

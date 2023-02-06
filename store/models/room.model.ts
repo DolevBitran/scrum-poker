@@ -3,7 +3,6 @@ import { RootModel } from './index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dispatch } from '..';
 import { CommonActions } from '@react-navigation/native';
-import { HOME_ROUTES } from '../../src/routes/HomeStack';
 import SocketManager from '../../src/services/SocketManager';
 
 const INITIAL_STATE: RoomState = {
@@ -22,7 +21,7 @@ export const room: any = createModel<RootModel>()({
     name: 'room',
     state: INITIAL_STATE,
     reducers: {
-        SET_ROOM: (state: RoomState, payload: Room): RoomState => ({
+        SET_ROOM: (state: RoomState, payload: IRoom): RoomState => ({
             ...state,
             id: payload.id,
             name: payload.name,
@@ -39,8 +38,8 @@ export const room: any = createModel<RootModel>()({
             },
         }),
         SET_ROOM_SOCKET: (state: RoomState, payload: RoomState['socket']): RoomState => ({ ...state, socket: payload }),
-        APPEND_GUEST: (state: RoomState, payload: Guest): RoomState => ({ ...state, guests: [...state.guests, payload] }),
-        REMOVE_GUEST: (state: RoomState, payload: Guest['id']): RoomState => ({
+        APPEND_GUEST: (state: RoomState, payload: IGuest): RoomState => ({ ...state, guests: [...state.guests, payload] }),
+        REMOVE_GUEST: (state: RoomState, payload: IGuest['id']): RoomState => ({
             ...state,
             guests: state.guests.filter((guest) => guest.id !== payload),
         }),
@@ -86,6 +85,15 @@ export const room: any = createModel<RootModel>()({
                 console.error(err);
             }
         },
+        async reconnect(payload: JoinRoomProps, state: RootModel) {
+            try {
+                const guestId = await AsyncStorage.getItem('guest_id')
+                return await dispatch.room.join({ ...payload, guestName: state.room.guestName, guestId })
+                // @TODO: handle simultaneous connections to same guest
+            } catch (err) {
+                console.error(err);
+            }
+        },
         async initializeRoom(payload: initializeRoomProps, state: RootModel) {
             const { room, admin_secret } = payload;
             console.log('initializing room', { room, admin_secret });
@@ -102,7 +110,7 @@ export const room: any = createModel<RootModel>()({
                 room_data.push(['admin_secret', admin_secret]);
             }
             await AsyncStorage.multiSet(room_data);
-            state.room.navigator.dispatch(CommonActions.navigate({ name: HOME_ROUTES.TABLE }));
+            state.room.navigator.dispatch(CommonActions.navigate({ name: 'Room' }));
         },
         async vote(payload: VoteProps, state: RootModel) {
             try {
@@ -114,19 +122,21 @@ export const room: any = createModel<RootModel>()({
             }
             return true;
         },
-        onGuestJoined(payload: { roomId: Room['id']; guest: Guest }, state: RootModel) {
+        onGuestJoined(payload: { roomId: IRoom['id'], guest: IGuest }, state: RootModel) {
             console.log('guest_joined', payload);
             if (state.room.id === payload.roomId) {
                 this.APPEND_GUEST(payload.guest);
             }
         },
-        onGuestLeave(payload: { roomId: Room['id']; guestId: Guest['id'] }, state: RootModel) {
+        onGuestLeave(payload: { roomId: IRoom['id'], guestId: IGuest['id'] }, state: RootModel) {
             console.log('guest_left', payload);
             if (state.room.id === payload.roomId) {
                 this.REMOVE_GUEST(payload.guestId);
             }
         },
-        onVoteUpdate(payload: VoteProps, state: RootModel) { },
+        onVoteUpdate(payload: { guestId: IGuest['id'], roomId: IRoom['id'], value: number }, state: RootModel) {
+            console.log(payload)
+        },
         onNextRound(payload: VoteProps, state: RootModel) { },
         onOptionsChanged(payload: VoteProps, state: RootModel) { },
         onRoomClosed(payload: VoteProps, state: RootModel) { },

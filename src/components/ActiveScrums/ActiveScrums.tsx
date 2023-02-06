@@ -34,7 +34,7 @@ const ActiveScrums: React.FC<IActiveScrumsProps> = () => {
                 paddingLeft: 40,
                 flexGrow: 0
             }}
-            style={{ width: windowWidth, flexGrow: 0, marginVertical: 30, }}
+            style={{ width: '100%', flexGrow: 0, marginVertical: 30, }}
         >
             {activeScrums.map(renderActiveScrum)}
         </ScrollView>
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         color: '#4B536E',
     },
     activeScrumsHeaderContainer: {
-        width: windowWidth,
+        width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 40,

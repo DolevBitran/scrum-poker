@@ -1,28 +1,28 @@
 const UP_TO_4 = [
     { top: '0%', right: '50%' },
-    { bottom: '0%', right: '50%' },
-    { bottom: '47%', right: '0%' },
-    { bottom: '47%', left: '0%' }
+    { top: '95%', right: '50%' },
+    { top: '47%', right: '0%' },
+    { top: '47%', right: '100%' }
 ]
 
 const UP_TO_6 = [
     { top: '0%', right: '50%' },
-    { top: '33%', right: '0%' },
-    { top: '33%', left: '0%' },
-    { bottom: '30%', left: '0%' },
-    { bottom: '30%', right: '0%' },
-    { bottom: '0%', left: '50%' },
+    { top: '31%', right: '0%' },
+    { top: '31%', right: '100%' },
+    { top: '65%', right: '100%' },
+    { top: '65%', right: '0%' },
+    { top: '95%', right: '50%' },
 ]
 
 const UP_TO_8 = [
     { top: '0%', right: '50%' },
     { top: '20%', right: '6%' },
-    { bottom: '47%', right: '0%' },
-    { bottom: '20%', right: '6%' },
-    { top: '20%', left: '6%' },
-    { bottom: '47%', left: '0%' },
-    { bottom: '20%', left: '6%' },
-    { bottom: '0%', left: '50%' },
+    { top: '47%', right: '0%' },
+    { top: '75%', right: '6%' },
+    { top: '20%', right: '94%' },
+    { top: '47%', right: '100%' },
+    { top: '75%', right: '94%' },
+    { top: '95%', right: '50%' },
 ]
 
 const UP_TO_12 = [

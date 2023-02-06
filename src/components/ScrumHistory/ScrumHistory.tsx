@@ -1,10 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Dimensions, I18nManager, Platform, ScrollView, TouchableOpacity } from 'react-native';
-
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import Text from '../Text';
-
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
 interface IScrumHistoryProps {
     onCreateRoomPressed: () => void
@@ -27,7 +23,7 @@ const ScrumHistory: React.FC<IScrumHistoryProps> = ({ onCreateRoomPressed }) => 
                 <Text style={styles.sectionHeaderAction}>Create +</Text>
             </TouchableOpacity>
         </View>
-        <View style={{ flex: 1, width: windowWidth, marginTop: 30 }}>
+        <View style={{ flex: 1, width: '100%', marginTop: 30 }}>
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 alwaysBounceVertical={false}
@@ -44,7 +40,7 @@ const styles = StyleSheet.create({
     sectionHeaderWrapper: {
         paddingHorizontal: 40,
         marginTop: 20,
-        width: windowWidth,
+        width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',

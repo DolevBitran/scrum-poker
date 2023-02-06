@@ -5,91 +5,99 @@ export { };
 
 declare global {
 
-    type SocketEvent = {
+    interface SocketEvent {
         name: string;
         handler: () => unknown;
     }
 
-    type Guest = {
+    interface IGuest {
         id: string;
         name: string;
     }
 
-    type Vote = number
+    type VoteType = number
 
-    type Round = {
+    interface IRound {
         [guestId: string]: Vote
     }
 
-    type RoomOptions = {
-    }
-
-    type Room = {
+    interface IRoom {
         id: string;
         name: string;
-        guests: Guest[];
-        roundsHistory: Round[],
-        options: RoomOptions;
+        guests: IGuest[];
+        roundsHistory: IRound[];
+        options: IRoomOptions;
     }
 
-    type RoomState = {
-        navigator: NavigationContainerRef<{ Home: unknown; Table: unknown; }> | null;
+    interface ICard {
+        displayName: string;
+        value: number;
+    }
+
+    type DeckType = ICard[]
+
+    interface IRoomOptions {
+        deck?: DeckType;
+    }
+
+    interface RoomState {
+        navigator: NavigationContainerRef<{ Home: React.FC, Room: React.FC }> | null;
         socket: Socket | null;
         id: string | null;
         name: string | null;
-        guests: Guest[];
-        roundsHistory: Round[];
-        options: RoomOptions;
+        guests: IGuest[];
+        roundsHistory: IRound[];
+        options: IRoomOptions;
         guestName: string;
         selectedCardIndex: number | null;
     }
 
     // ==================== PAYLOADS ====================
 
-    type CreateRoomProps = {
+    interface CreateRoomProps {
         hostName: string;
         roomName: string;
     }
 
-    type JoinRoomProps = {
+    interface JoinRoomProps {
         id: RoomState['id'];
-        guestName: Guest['name'];
-        guestId?: Guest['id']
+        guestName: IGuest['name'];
+        guestId?: IGuest['id']
     }
 
-    type CloseRoomProps = {
+    interface CloseRoomProps {
     }
 
-    type initializeRoomProps = {
-        room: Room;
+    interface initializeRoomProps {
+        room: IRoom;
         admin_secret: string;
     }
 
-    type VoteProps = {
+    interface VoteProps {
         roomId: string;
         value: number;
     }
 
     // ==================== RESPONSES ====================
 
-    type CreateRoomResponse = {
-        id: Room['id'];
+    interface CreateRoomResponse {
+        id: IRoom['id'];
         hostId: string;
         admin_secret?: string;
-        room: Room
+        room: IRoom
     }
 
-    type JoinRoomResponse = {
-        id: Room['id'];
-        hostId: Guest['id'];
+    interface JoinRoomResponse {
+        id: IRoom['id'];
+        hostId: IGuest['id'];
         admin_secret?: string;
-        room: Room;
+        room: IRoom;
     }
 
-    type CloseRoomResponse = {
+    interface CloseRoomResponse {
     }
 
-    type VoteResponse = {
+    interface VoteResponse {
         success: boolean
     }
 

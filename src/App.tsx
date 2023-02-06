@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Dimensions, I18nManager, Platform, } from 'react-native';
 
 import { NavigationContainer, NavigationContainerProps, NavigationContainerRef } from '@react-navigation/native';
@@ -33,7 +33,7 @@ export default WrappedApp
 function App() {
   const navigationContainerRef = useRef<NavigationContainerRef<{
     Home: React.FC;
-    Table: React.FC;
+    Room: React.FC;
   }>>(null)
 
   const dispatch = useDispatch<Dispatch>();
@@ -47,7 +47,7 @@ function App() {
   const config = {
     screens: {
       Home: '',
-      Table: 'table',
+      Room: 'room/:roomId',
     },
   };
 
@@ -65,7 +65,7 @@ function App() {
     'Rubik-700': require('../assets/fonts/Rubik/Rubik-Bold.ttf'),
   })
 
-  const onLayoutRootView = React.useCallback(async () => {
+  const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       console.log('fonts loaded')
       await SplashScreen.hideAsync();

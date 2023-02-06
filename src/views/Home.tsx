@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Dimensions, TouchableOpacity, TextInput, I18nManager, Platform, ScrollView } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity, TextInput, I18nManager, Platform, ScrollView, useStateDimensions } from 'react-native';
 
 import Lottie from '../components/Lottie';
 import { LottieRefCurrentProps } from 'lottie-react';
@@ -91,7 +91,7 @@ export default function Home() {
     </View>
 
     const Join = () => <View style={{
-        width: windowWidth * 0.8,
+        width: '80%',
         borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
@@ -166,11 +166,13 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         writingDirection: 'ltr',
         overflow: 'hidden',
+        width: '100%'
     },
     body: {
         paddingTop: 40,
         // justifyContent: 'flex-start',
         // alignItems: 'center',
+        width: '100%',
         overflow: 'hidden',
     },
     createButton: {
