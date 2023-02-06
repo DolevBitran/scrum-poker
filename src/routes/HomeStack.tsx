@@ -1,42 +1,31 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import { CardStyleInterpolators } from '@react-navigation/stack';
+import { useSelector } from 'react-redux';
+import { getRoom } from '../../store/selectors/room.selector';
+
 import Header from '../components/Header';
-import { Entypo } from '@expo/vector-icons';
-
 import Home from '../views/Home';
-import Table from '../views/Table';
+import Room from '../views/Room';
 
-const Stack = createNativeStackNavigator();
-export const HOME_ROUTES = {
-    HOME: 'Home',
-    TABLE: 'Table',
-}
+type HomeStackParamList = {
+    Home: undefined;
+    Room: { roomId: string };
+};
+
+const Stack = createNativeStackNavigator<HomeStackParamList>();
 
 export default function HomeStack() {
+    const room = useSelector(getRoom)
 
     return (
         <Stack.Navigator screenOptions={{
-            headerLeft: () => null,
-            // headerRight: () => null,
             header: () => <Header />,
             headerShown: true,
-            // headerShadowVisible: false,
             headerStyle: {
                 backgroundColor: '#fff'
             }
-
-            // gestureEnabled: true,
-            // gestureDirection: 'horizontal',
-            // cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            // cardStyleInterpolator: (current) => {
-            //   return { cardStyle: { opacity: current.progress } }
-            // },
-            // cardStyle: {
-            //     backgroundColor: "transparent"
-            // }
         }}>
-            <Stack.Screen name={HOME_ROUTES.HOME} component={Home} />
-            <Stack.Screen name={HOME_ROUTES.TABLE} component={Table} />
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Room" component={Room} initialParams={{ roomId: room?.id }} />
         </Stack.Navigator>
     );
 }

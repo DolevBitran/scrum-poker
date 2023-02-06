@@ -1,8 +1,7 @@
 import { createSelector } from 'reselect';
 import { iRootState } from '..';
-import { Room, RoomState } from '../models/room.model';
 
-export const getRoom = (state: iRootState): Room => ({
+export const getRoom = (state: iRootState): IRoom => ({
 	id: state.room.id,
 	name: state.room.name,
 	guests: state.room.guests,

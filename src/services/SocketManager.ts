@@ -81,7 +81,7 @@ class SocketManager {
         this.Events = [
             { name: 'guest_joined', handler: store.dispatch.room.onGuestJoined },
             { name: 'guest_left', handler: store.dispatch.room.onGuestLeave },
-            // { name: 'room_vote', handler: store.dispatch.room.onVoteUpdate },
+            { name: 'guest_voted', handler: store.dispatch.room.onVoteUpdate },
             // { name: 'next_round', handler: store.dispatch.room.onNextRound },
             // { name: 'options_changed', handler: store.dispatch.room.optionsChanged },
             // { name: 'room_closed', handler: store.dispatch.room.roomDismissed },
