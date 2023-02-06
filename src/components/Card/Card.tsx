@@ -23,7 +23,7 @@ const Card: React.FC<ICardProps> = ({ card, index }) => {
     const roomSelectedCardIndex = useSelector(getSelectedCardIndex)
     const dispatch = useDispatch<Dispatch>()
 
-    const onVote = async (value: number) => {
+    const onVote = async () => {
         dispatch.room.vote({ roomId: room.id, value: card.value });
     }
 
