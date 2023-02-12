@@ -10,6 +10,7 @@ export const getRoom = (state: iRootState): IRoom => ({
 });
 
 export const getGuestName = (state: iRootState): RoomState['guestName'] => state.room.guestName;
+export const getCurrentRound = (state: iRootState): RoomState['currentRound'] => state.room.currentRound;
 export const getDeck = (state: iRootState): RoomState['options']['deck'] => state.room.options.deck;
 
 export const getSelectedCardIndex = (state: iRootState): RoomState['selectedCardIndex'] => state.room.selectedCardIndex;

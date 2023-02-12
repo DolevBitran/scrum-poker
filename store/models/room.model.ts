@@ -12,6 +12,7 @@ const INITIAL_STATE: RoomState = {
     name: null,
     guests: [],
     roundsHistory: [],
+    currentRound: {},
     options: {},
     guestName: '',
     selectedCardIndex: null,
@@ -43,6 +44,7 @@ export const room: any = createModel<RootModel>()({
             ...state,
             guests: state.guests.filter((guest) => guest.id !== payload),
         }),
+        APPEND_VOTE: (state: RoomState, payload: { guestId: IGuest['id'], value: number }): RoomState => ({ ...state, currentRound: { ...state.currentRound, [payload.guestId]: payload.value } }),
         SET_NAVIGATOR: (state: RoomState, payload: RoomState['navigator']): RoomState => ({ ...state, navigator: payload }),
         SET_GUEST_NAME: (state: RoomState, payload: RoomState['guestName']): RoomState => ({
             ...state,
@@ -136,6 +138,7 @@ export const room: any = createModel<RootModel>()({
         },
         onVoteUpdate(payload: { guestId: IGuest['id'], roomId: IRoom['id'], value: number }, state: RootModel) {
             console.log(payload)
+            this.APPEND_VOTE(payload)
         },
         onNextRound(payload: VoteProps, state: RootModel) { },
         onOptionsChanged(payload: VoteProps, state: RootModel) { },

@@ -47,6 +47,7 @@ declare global {
         name: string | null;
         guests: IGuest[];
         roundsHistory: IRound[];
+        currentRound: IRound;
         options: IRoomOptions;
         guestName: string;
         selectedCardIndex: number | null;

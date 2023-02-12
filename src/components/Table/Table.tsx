@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, Dimensions, LayoutChangeEvent } from 'react-native';
-import { getRoom } from '../../../store/selectors/room.selector';
+import { StyleSheet, View, Dimensions } from 'react-native';
+import { getCurrentRound, getRoom } from '../../../store/selectors/room.selector';
 import { useSelector } from 'react-redux';
 import Text from '../Text';
 import { useTransition, config, TransitionState } from '@react-spring/native';
-// import Guest from '../Guest';
 import SEATS from '../../Seats';
 import { animated, SpringValue } from '@react-spring/native';
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -15,6 +15,7 @@ export type ITableProps = {
 
 const Table: React.FC<ITableProps> = ({ }) => {
     const room = useSelector(getRoom)
+    const currentRound = useSelector(getCurrentRound)
     const guests = room.guests
 
     const [transitions, transitionAPI] = useTransition(guests, () => ({
@@ -28,6 +29,7 @@ const Table: React.FC<ITableProps> = ({ }) => {
     }) => {
         const room = useSelector(getRoom)
         const guests = room.guests
+        const guestScore = currentRound[guest.id] || ''
         const pos = SEATS[Math.max(guests.length, index + 1)][index]
 
         useEffect(() => {
@@ -40,7 +42,7 @@ const Table: React.FC<ITableProps> = ({ }) => {
         >
             <Text style={styles.userName}>{guest.name}</Text>
             <View style={styles.userScoreWrapper}>
-                <Text style={styles.userScore}>{1}</Text>
+                <Text style={styles.userScore}>{guestScore}</Text>
             </View>
         </animated.View>
     }
