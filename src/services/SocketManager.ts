@@ -22,13 +22,12 @@ class SocketManager {
         })
     }
 
-
     static createRoom(payload: CreateRoomProps) {
         return new Promise<CreateRoomResponse>(async (resolve, reject) => {
             const socket = await this.connect()
             const callback = (response: CreateRoomResponse) => {
                 console.log('room_created', response)
-                this.subscribe(socket)
+                this.subscribe()
                 resolve(response)
             }
 
@@ -36,13 +35,12 @@ class SocketManager {
         })
     }
 
-
     static joinRoom(payload: JoinRoomProps) {
         return new Promise<JoinRoomResponse>(async (resolve, reject) => {
             const socket = await this.connect()
             const callback = (response: JoinRoomResponse) => {
                 console.log('room_joined', response)
-                this.subscribe(socket)
+                this.subscribe()
                 resolve(response)
             }
 
@@ -55,14 +53,13 @@ class SocketManager {
             const socket = await this.connect()
             const callback = (response: CloseRoomResponse) => {
                 console.log('room_closed', response)
-                this.unsubscribe(socket)
+                this.unsubscribe()
                 resolve(response)
             }
 
             socket.emit('close_room', payload, callback)
         })
     }
-
 
     static async vote(payload: VoteProps) {
         return new Promise<VoteResponse>(async (resolve, reject) => {
@@ -74,24 +71,33 @@ class SocketManager {
 
             socket.emit('vote', payload, callback)
         })
-
     }
 
-    static subscribe(socket: Socket) {
+    static async startNextRound(payload: NextRoundProps) {
+        return new Promise<NextRoundResponse>(async (resolve, reject) => {
+            const socket = await this.connect()
+            const callback = (response: NextRoundResponse) => {
+                resolve(response)
+            }
+            socket.emit('next_round', payload, callback)
+        })
+    }
+
+    static subscribe() {
         this.Events = [
             { name: 'guest_joined', handler: store.dispatch.room.onGuestJoined },
             { name: 'guest_left', handler: store.dispatch.room.onGuestLeave },
             { name: 'guest_voted', handler: store.dispatch.room.onVoteUpdate },
-            // { name: 'next_round', handler: store.dispatch.room.onNextRound },
+            { name: 'next_round', handler: store.dispatch.room.onNextRound },
             // { name: 'options_changed', handler: store.dispatch.room.optionsChanged },
             // { name: 'room_closed', handler: store.dispatch.room.roomDismissed },
         ]
 
-        this.Events.forEach((event: SocketEvent) => socket.on(event.name, event.handler))
+        this.Events.forEach((event: SocketEvent) => this.socket.on(event.name, event.handler))
     }
 
-    static unsubscribe(socket: Socket) {
-        this.Events.forEach((event: SocketEvent) => socket.off(event.name))
+    static unsubscribe() {
+        this.Events.forEach((event: SocketEvent) => this.socket.off(event.name))
     }
 
 }

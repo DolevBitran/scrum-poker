@@ -45,6 +45,7 @@ export const room: any = createModel<RootModel>()({
             guests: state.guests.filter((guest) => guest.id !== payload),
         }),
         APPEND_VOTE: (state: RoomState, payload: { guestId: IGuest['id'], value: number }): RoomState => ({ ...state, currentRound: { ...state.currentRound, [payload.guestId]: payload.value } }),
+        NEW_ROUND: (state: RoomState): RoomState => ({ ...state, roundsHistory: [...state.roundsHistory, state.currentRound], currentRound: {} }),
         SET_NAVIGATOR: (state: RoomState, payload: RoomState['navigator']): RoomState => ({ ...state, navigator: payload }),
         SET_GUEST_NAME: (state: RoomState, payload: RoomState['guestName']): RoomState => ({
             ...state,
@@ -124,6 +125,16 @@ export const room: any = createModel<RootModel>()({
             }
             return true;
         },
+        async startNextRound(payload: NextRoundProps, state: RootModel) {
+            try {
+                const response = await SocketManager.startNextRound(payload)
+                console.log(response)
+            } catch (err) {
+                console.error(err);
+                throw err;
+            }
+            return true;
+        },
         onGuestJoined(payload: { roomId: IRoom['id'], guest: IGuest }, state: RootModel) {
             console.log('guest_joined', payload);
             if (state.room.id === payload.roomId) {
@@ -140,9 +151,14 @@ export const room: any = createModel<RootModel>()({
             console.log(payload)
             this.APPEND_VOTE(payload)
         },
-        onNextRound(payload: VoteProps, state: RootModel) { },
+        onNextRound(payload: VoteProps, state: RootModel) {
+            console.log('next_round', payload)
+            this.NEW_ROUND()
+        },
         onOptionsChanged(payload: VoteProps, state: RootModel) { },
-        onRoomClosed(payload: VoteProps, state: RootModel) { },
+        onRoomClosed(payload: VoteProps, state: RootModel) {
+            SocketManager.unsubscribe()
+        },
         async setName(payload: string, state: RootModel) {
             if (state.room.guestName !== payload) {
                 await AsyncStorage.setItem('guest_name', payload);

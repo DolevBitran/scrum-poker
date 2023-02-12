@@ -193,7 +193,9 @@ const styles = StyleSheet.create({
     textInputWrapper: {
         display: 'flex',
         justifyContent: 'center',
-        border: '1px solid black',
+        borderColor: 'black',
+        borderStyle: 'solid',
+        borderWidth: 1,
         borderRadius: 14,
         marginVertical: 10,
         paddingHorizontal: 10,

@@ -79,6 +79,11 @@ declare global {
         value: number;
     }
 
+    interface NextRoundProps {
+        roomId: string;
+        // value: number;
+    }
+
     // ==================== RESPONSES ====================
 
     interface CreateRoomResponse {
@@ -100,6 +105,10 @@ declare global {
 
     interface VoteResponse {
         success: boolean
+    }
+
+    interface NextRoundResponse {
+        average: number;
     }
 
 }
