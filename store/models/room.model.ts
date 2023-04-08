@@ -45,7 +45,7 @@ export const room: any = createModel<RootModel>()({
             guests: state.guests.filter((guest) => guest.id !== payload),
         }),
         APPEND_VOTE: (state: RoomState, payload: { guestId: IGuest['id'], value: number }): RoomState => ({ ...state, currentRound: { ...state.currentRound, [payload.guestId]: payload.value } }),
-        NEW_ROUND: (state: RoomState): RoomState => ({ ...state, roundsHistory: [...state.roundsHistory, state.currentRound], currentRound: {} }),
+        NEW_ROUND: (state: RoomState, payload: IRound): RoomState => ({ ...state, roundsHistory: [...state.roundsHistory, payload], currentRound: {} }),
         SET_NAVIGATOR: (state: RoomState, payload: RoomState['navigator']): RoomState => ({ ...state, navigator: payload }),
         SET_GUEST_NAME: (state: RoomState, payload: RoomState['guestName']): RoomState => ({
             ...state,
@@ -151,9 +151,9 @@ export const room: any = createModel<RootModel>()({
             console.log(payload)
             this.APPEND_VOTE(payload)
         },
-        onNextRound(payload: VoteProps, state: RootModel) {
+        onNextRound(payload: { lastRound: IRound }, state: RootModel) {
             console.log('next_round', payload)
-            this.NEW_ROUND()
+            this.NEW_ROUND(payload.lastRound)
         },
         onOptionsChanged(payload: VoteProps, state: RootModel) { },
         onRoomClosed(payload: VoteProps, state: RootModel) {

@@ -108,7 +108,7 @@ declare global {
     }
 
     interface NextRoundResponse {
-        average: number;
+        success: boolean
     }
 
 }

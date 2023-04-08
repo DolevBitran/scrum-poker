@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
-import { getDeck, getIsAllGuestsVoted, getRoom, getCurrentRound } from '../../../store/selectors/room.selector';
+import { getDeck, getRoom, getCurrentRound, getUnvotedGuestCount } from '../../../store/selectors/room.selector';
 import { useDispatch, useSelector } from 'react-redux';
 import { BottomSheetRefProps } from '../BottomSheet/BottomSheet';
 import { Dispatch } from '../../../store';
@@ -21,7 +21,7 @@ const VoteKeyboard: React.FC<IVoteKeyboardProps> = () => {
     const room = useSelector(getRoom)
     const deck = useSelector(getDeck)
     const currentRound = useSelector(getCurrentRound)
-    const isAllGuestsVoted = useSelector(getIsAllGuestsVoted)
+    const unvotedGuestCount = useSelector(getUnvotedGuestCount)
     const shouldDisableNextRound = !Object.values(currentRound).length
     const dispatch = useDispatch<Dispatch>()
     const [visible, setVisible] = useState<boolean>(false)
@@ -31,7 +31,7 @@ const VoteKeyboard: React.FC<IVoteKeyboardProps> = () => {
     }, [bottomSheetRef.current])
 
     const onStartNextRound = () => {
-        if (isAllGuestsVoted) {
+        if (!unvotedGuestCount) {
             dispatch.room.startNextRound({ roomId: room.id })
         } else {
             setVisible(true)
@@ -74,7 +74,7 @@ const VoteKeyboard: React.FC<IVoteKeyboardProps> = () => {
         {/* Modal */}
         <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={console.log}>
             <Text>Are you sure you want to call next round ?</Text>
-            <Text>x participates haven't vote yet.</Text>
+            <Text>{unvotedGuestCount} participates haven't vote yet.</Text>
             <View style={styles.modalActions}>
                 <TouchableOpacity style={[styles.nextRoundBtn, { marginRight: 10 }]} onPress={onAccept}>
                     <Text style={styles.nextRoundBtnText}>Accept</Text>
