@@ -17,10 +17,15 @@ export default function Room({ }) {
     const room = useSelector(getRoom)
     const dispatch = useDispatch<Dispatch>()
 
+    const resetRoom = () => {
+        dispatch.room.onRoomClosed()
+    }
+
     useEffect(() => {
         if (!room.id && route.params?.roomId) {
             dispatch.room.reconnect({ roomId: route.params.roomId })
         }
+        return resetRoom
     }, [])
 
     if (!room.id) {
@@ -46,38 +51,3 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
 });
-
-
-
-
-        // {/* Join Card */}
-        // <LinearGradient
-        //   // colors={['rgb(255, 241, 235)', 'rgb(172, 224, 249)']}
-        //   colors={['#AFAFAF', '#AFAFAF']}
-        //   start={[0.01, 0.01]}
-        //   end={[0.2, 0.6]}
-        //   locations={[0.1, 0.9]}
-        //   style={styles.joinContainer}>
-        //   <Text style={styles.joinHeader}>Join an existing room</Text>
-        //   <View style={styles.searchRow}>
-        //     <View style={styles.joinInputWrapper}>
-        //       {/* @ts-ignore */}
-        //       <TextInput style={[styles.joinTextInput, Platform.select({
-        //         web: { outlineWidth: 0 }
-        //       })]} placeholder='ex: 324566' placeholderTextColor='lightgray' />
-        //     </View>
-        //     <TouchableOpacity>
-        //       <Text style={styles.joinText}>Join</Text>
-        //     </TouchableOpacity>
-        //   </View>
-        // </LinearGradient>
-
-        // {/* Lottie Test */}
-        // <Lottie
-        //   //@ts-ignore
-        //   animationRef={animationRef}
-        //   style={{ width: windowWidth * 0.8 }}
-        //   source={require('../assets/lottie/planning.json')}
-        //   autoPlay
-        //   loop
-        // />
