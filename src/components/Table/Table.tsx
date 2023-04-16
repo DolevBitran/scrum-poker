@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import { getCurrentRound, getRoom } from '../../../store/selectors/room.selector';
+import { getCurrentRound, getOnlineGuests, getRoom } from '../../../store/selectors/room.selector';
 import { useSelector } from 'react-redux';
 import Text from '../Text';
 import { useTransition, config, TransitionState } from '@react-spring/native';
@@ -14,9 +14,8 @@ export type ITableProps = {
 }
 
 const Table: React.FC<ITableProps> = ({ }) => {
-    const room = useSelector(getRoom)
     const currentRound = useSelector(getCurrentRound)
-    const guests = room.guests
+    const guests = useSelector(getOnlineGuests)
 
     const [transitions, transitionAPI] = useTransition(guests, () => ({
         from: { opacity: 0 },

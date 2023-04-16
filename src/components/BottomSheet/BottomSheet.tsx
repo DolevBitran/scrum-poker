@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import React, { useCallback, useEffect, useImperativeHandle } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useSpringValue, animated } from '@react-spring/native';
@@ -10,6 +10,8 @@ const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 130;
 type BottomSheetProps = {
     children?: React.ReactNode;
     snapPoints: any[];
+    isDraggable?: boolean;
+    style?: ViewStyle
 };
 
 export type BottomSheetRefProps = {
@@ -18,7 +20,7 @@ export type BottomSheetRefProps = {
 };
 
 const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
-    ({ children, snapPoints }, ref) => {
+    ({ children, snapPoints, isDraggable = true, style = {} }, ref) => {
         const translateY = useSpringValue(0)
         const active = useSpringValue(false);
 
@@ -55,21 +57,27 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         const context = useSpringValue(0);
         const gesture = Gesture.Pan()
             .onStart(() => {
-                context.set(translateY.goal);
+                if (isDraggable) {
+                    context.set(translateY.goal);
+                }
             })
             .onUpdate((event) => {
-                translateY.set(event.translationY + context.goal);
-                translateY.set(Math.max(translateY.goal, MAX_TRANSLATE_Y));
+                if (isDraggable) {
+                    translateY.set(event.translationY + context.goal);
+                    translateY.set(Math.max(translateY.goal, MAX_TRANSLATE_Y));
+                }
             })
             .onEnd(() => {
-                const snap = closest(translateY.goal, snapPoints.map(e => e * -SCREEN_HEIGHT))
-                scrollTo(snap / -SCREEN_HEIGHT)
+                if (isDraggable) {
+                    const snap = closest(translateY.goal, snapPoints.map(e => e * -SCREEN_HEIGHT))
+                    scrollTo(snap / -SCREEN_HEIGHT)
+                }
             });
 
         return (
             <GestureDetector gesture={gesture}>
-                <animated.View style={[styles.bottomSheetContainer, { transform: [{ translateY }] }]}>
-                    <View style={styles.line} />
+                <animated.View style={[styles.bottomSheetContainer, style, { transform: [{ translateY }] }]}>
+                    {isDraggable && <View style={styles.line} />}
                     {children}
                 </animated.View>
             </GestureDetector>

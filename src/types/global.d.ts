@@ -5,6 +5,18 @@ export { };
 
 declare global {
 
+
+    // ==================== ENUMS ====================
+
+
+    // enum ROOM_MODE {
+    //     TABLE = 0,
+    //     SUMMARY = 1
+    // }
+
+    // ==================== TYPES ====================
+
+
     interface SocketEvent {
         name: string;
         handler: () => unknown;
@@ -13,9 +25,12 @@ declare global {
     interface IGuest {
         id: string;
         name: string;
+        isConnected: boolean;
     }
 
     type VoteType = number
+
+    type Vote = number | null
 
     interface IRound {
         [guestId: string]: Vote
@@ -26,6 +41,7 @@ declare global {
         name: string;
         guests: IGuest[];
         roundsHistory: IRound[];
+        currentRound: IRound;
         options: IRoomOptions;
     }
 
@@ -40,6 +56,12 @@ declare global {
         deck?: DeckType;
     }
 
+    type ISummaryData = { [id: IGuest['id']]: Vote[] }
+
+    interface AppState {
+        room: ROOM_MODE
+    }
+
     interface RoomState {
         navigator: NavigationContainerRef<{ Home: React.FC, Room: React.FC }> | null;
         socket: Socket | null;
@@ -52,6 +74,7 @@ declare global {
         guestName: string;
         selectedCardIndex: number | null;
     }
+
 
     // ==================== PAYLOADS ====================
 
@@ -71,7 +94,8 @@ declare global {
 
     interface initializeRoomProps {
         room: IRoom;
-        admin_secret: string;
+        admin_secret?: string;
+        guestId: IGuest['id'];
     }
 
     interface VoteProps {
@@ -90,12 +114,13 @@ declare global {
         id: IRoom['id'];
         hostId: string;
         admin_secret?: string;
-        room: IRoom
+        room: IRoom;
     }
 
     interface JoinRoomResponse {
         id: IRoom['id'];
         hostId: IGuest['id'];
+        guestId: IGuest['id'];
         admin_secret?: string;
         room: IRoom;
     }

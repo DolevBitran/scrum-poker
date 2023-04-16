@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from 'react';
-import { Dimensions, I18nManager, Platform, } from 'react-native';
+import { Dimensions, I18nManager, Platform } from 'react-native';
 
-import { NavigationContainer, NavigationContainerProps, NavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import HomeStack from './routes/HomeStack';
 import ClientConfiguration from './config/ClientConfiguration';
 import { useFonts } from 'expo-font';
@@ -73,6 +73,7 @@ function App() {
   }, [fontsLoaded])
 
   onLayoutRootView()
+
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

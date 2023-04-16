@@ -5,7 +5,7 @@ import { useWindowDimensions } from 'react-native';
 
 
 const ClientConfiguration = () => {
-
+    return null
 }
 
 export default ClientConfiguration

@@ -68,7 +68,7 @@ export default function Home() {
     const onJoinRoom = async () => {
         const { roomId, guestName } = roomRef.current
         if (roomId && guestName) {
-            await dispatch.room.join({ roomId, guestName })
+            await dispatch.room.join({ id: roomId, guestName })
         }
     }
 

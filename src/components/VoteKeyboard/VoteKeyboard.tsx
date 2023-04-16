@@ -60,7 +60,7 @@ const VoteKeyboard: React.FC<IVoteKeyboardProps> = () => {
         return styles.nextRoundBtnText
     }
 
-    return <BottomSheet ref={bottomSheetRef} snapPoints={[0.35]}>
+    return <BottomSheet ref={bottomSheetRef} snapPoints={[0.35]} isDraggable={false} style={{ borderRadius: 0 }}>
         {/* ToolBar */}
         <View style={styles.toolbarContainer}>
             <TouchableOpacity style={getNextRoundBtnStyle()} onPress={onStartNextRound} disabled={shouldDisableNextRound}>
