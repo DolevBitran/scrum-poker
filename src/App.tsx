@@ -76,7 +76,7 @@ function App() {
 
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer linking={linking} ref={navigationContainerRef}>
         {fontsLoaded && <HomeStack />}
       </NavigationContainer>
