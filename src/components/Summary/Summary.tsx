@@ -1,11 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, View, Dimensions, ScrollView } from 'react-native';
-import { getCurrentRound, getRoom, getSummaryTableData } from '../../../store/selectors/room.selector';
+import { getRoom, getSummaryTableData } from '../../../store/selectors/room.selector';
 import { useSelector } from 'react-redux';
 import Text from '../Text';
-import { useTransition, config, TransitionState } from '@react-spring/native';
-import SEATS from '../../Seats';
-import { animated, SpringValue } from '@react-spring/native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;

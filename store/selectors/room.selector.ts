@@ -23,7 +23,6 @@ export const getSummaryTableData = (state: iRootState): ISummaryData => {
 	const dataTable: ISummaryData = {};
 	state.room.guests.forEach((guest: IGuest) => dataTable[guest.id] = new Array(rounds.length).fill(null));
 	rounds.map((round: IRound, index) => {
-		console.log(round)
 		const votes = Object.entries(round)
 		votes.forEach(([guestId, voteValue]: [IGuest['id'], Vote]) => dataTable[guestId][index] = voteValue)
 	})
