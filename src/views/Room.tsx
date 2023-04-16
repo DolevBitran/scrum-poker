@@ -7,6 +7,9 @@ import { getRoom } from '../../store/selectors/room.selector';
 
 import Table from '../components/Table';
 import VoteKeyboard from '../components/VoteKeyboard';
+import Summary from '../components/Summary';
+import { ROOM_MODE } from '../constants/constants';
+import { getRoomMode } from '../../store/selectors/app.selector';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -15,7 +18,10 @@ const windowHeight = Dimensions.get('window').height;
 export default function Room({ }) {
     const route = useRoute<RouteProp<{ params: { roomId: string } }, 'params'>>()
     const room = useSelector(getRoom)
+    const roomMode = useSelector(getRoomMode)
     const dispatch = useDispatch<Dispatch>()
+
+    const shouldShowTable = roomMode === ROOM_MODE.TABLE
 
     const resetRoom = () => {
         dispatch.room.onRoomClosed()
@@ -23,6 +29,7 @@ export default function Room({ }) {
 
     useEffect(() => {
         if (!room.id && route.params?.roomId) {
+            // @TODO remove reconnect and use join
             dispatch.room.reconnect({ roomId: route.params.roomId })
         }
         return resetRoom
@@ -34,7 +41,10 @@ export default function Room({ }) {
 
     return (
         <View style={styles.container}>
-            <Table />
+            {shouldShowTable ?
+                <Table /> :
+                <Summary />
+            }
             <VoteKeyboard />
         </View >
     );

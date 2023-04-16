@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { Dimensions, I18nManager, Platform, } from 'react-native';
+import { Dimensions, I18nManager, Platform, View } from 'react-native';
 
 import { NavigationContainer, NavigationContainerProps, NavigationContainerRef } from '@react-navigation/native';
 import HomeStack from './routes/HomeStack';
@@ -74,8 +74,9 @@ function App() {
 
   onLayoutRootView()
 
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, }}>
       <NavigationContainer linking={linking} ref={navigationContainerRef}>
         {fontsLoaded && <HomeStack />}
       </NavigationContainer>
