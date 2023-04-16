@@ -7,7 +7,6 @@ import SocketManager from '../../src/services/SocketManager';
 import { ROOM_MODE } from '../../src/constants/constants';
 
 const INITIAL_STATE: RoomState = {
-    navigator: null,
     socket: null,
     id: null,
     name: null,
@@ -45,14 +44,8 @@ export const room: any = createModel<RootModel>()({
             ...state,
             guests: [...state.guests.filter(guest => guest.id !== payload.id), payload]
         }),
-        // APPEND_GUEST: (state: RoomState, payload: IGuest): RoomState => ({ ...state, guests: [...state.guests, payload] }),
-        // REMOVE_GUEST: (state: RoomState, payload: IGuest['id']): RoomState => ({
-        //     ...state,
-        //     guests: state.guests.filter((guest) => guest.id !== payload),
-        // }),
         APPEND_VOTE: (state: RoomState, payload: { guestId: IGuest['id'], value: number }): RoomState => ({ ...state, currentRound: { ...state.currentRound, [payload.guestId]: payload.value } }),
         NEW_ROUND: (state: RoomState, payload: IRound): RoomState => ({ ...state, roundsHistory: [...state.roundsHistory, payload], currentRound: {} }),
-        SET_NAVIGATOR: (state: RoomState, payload: RoomState['navigator']): RoomState => ({ ...state, navigator: payload }),
         SET_GUEST_NAME: (state: RoomState, payload: RoomState['guestName']): RoomState => ({
             ...state,
             guestName: payload,
@@ -63,18 +56,17 @@ export const room: any = createModel<RootModel>()({
         }),
     },
     effects: (dispatch: Dispatch) => ({
-        async init(payload: RoomState['navigator'], state: RootModel) {
+        async init(payload: AppState['navigator'], state: RootModel) {
             const guestName = await AsyncStorage.getItem('guest_name');
-            this.SET_NAVIGATOR(payload);
+            dispatch.app.SET_NAVIGATOR(payload);
             this.SET_GUEST_NAME(guestName);
 
-            return state.room.navigator;
+            return state.app.navigator;
         },
         async create(payload: CreateRoomProps, state: RootModel) {
             try {
                 dispatch.room.setName(payload.hostName);
                 const response = await SocketManager.createRoom(payload);
-                console.log(response)
                 await dispatch.room.initializeRoom({ ...response, guestId: response.hostId });
                 return state.room.id;
             } catch (err) {
@@ -89,7 +81,6 @@ export const room: any = createModel<RootModel>()({
                 }
                 dispatch.room.setName(payload.guestName);
                 const response = await SocketManager.joinRoom(payload);
-                // console.log(response.room)
                 await dispatch.room.initializeRoom({ room: response.room, guestId: response.guestId });
                 return state.room.id;
             } catch (err) {
@@ -108,7 +99,6 @@ export const room: any = createModel<RootModel>()({
         },
         async initializeRoom(payload: initializeRoomProps, state: RootModel) {
             const { room, admin_secret } = payload;
-            console.log('initializing room', { room, admin_secret });
             this.SET_ROOM(room);
 
             const room_id = room.id;
@@ -122,7 +112,8 @@ export const room: any = createModel<RootModel>()({
                 room_data.push(['admin_secret', admin_secret]);
             }
             await AsyncStorage.multiSet(room_data);
-            state.room.navigator.dispatch(CommonActions.navigate({ name: 'Room' }));
+            state.app.navigator.dispatch(CommonActions.navigate({ name: 'Room' }));
+
         },
         async vote(payload: VoteProps, state: RootModel) {
             try {
@@ -137,7 +128,6 @@ export const room: any = createModel<RootModel>()({
         async startNextRound(payload: NextRoundProps, state: RootModel) {
             try {
                 const response = await SocketManager.startNextRound(payload)
-                console.log(response)
             } catch (err) {
                 console.error(err);
                 throw err;
@@ -145,13 +135,11 @@ export const room: any = createModel<RootModel>()({
             return true;
         },
         onGuestJoined(payload: { roomId: IRoom['id'], guest: IGuest }, state: RootModel) {
-            console.log('guest_joined', payload);
             if (state.room.id === payload.roomId) {
                 this.SET_GUEST(payload.guest);
             }
         },
         onGuestLeave(payload: { roomId: IRoom['id'], guest: IGuest }, state: RootModel) {
-            console.log('guest_left', payload);
             if (state.room.id === payload.roomId) {
                 this.SET_GUEST(payload.guest);
             }
@@ -160,7 +148,6 @@ export const room: any = createModel<RootModel>()({
             this.APPEND_VOTE(payload)
         },
         onNextRound(payload: { lastRound: IRound }, state: RootModel) {
-            console.log('next_round', payload)
             this.NEW_ROUND(payload.lastRound)
         },
         onOptionsChanged(payload: VoteProps, state: RootModel) { },

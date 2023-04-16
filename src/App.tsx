@@ -1,14 +1,13 @@
 import React, { useCallback, useRef } from 'react';
 import { Dimensions, I18nManager, Platform } from 'react-native';
 
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
-import HomeStack from './routes/HomeStack';
+import { Navigation } from './Navigation';
 import ClientConfiguration from './config/ClientConfiguration';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useDispatch } from 'react-redux';
-import { Dispatch, store } from '../store';
+import { store } from '../store';
 
 
 SplashScreen.preventAutoHideAsync()
@@ -31,31 +30,6 @@ const WrappedApp = () => (
 export default WrappedApp
 
 function App() {
-  const navigationContainerRef = useRef<NavigationContainerRef<{
-    Home: React.FC;
-    Room: React.FC;
-  }>>(null)
-
-  const dispatch = useDispatch<Dispatch>();
-
-  React.useEffect(() => {
-    if (navigationContainerRef.current) {
-      dispatch.room.init(navigationContainerRef.current)
-    }
-  }, [navigationContainerRef.current])
-
-  const config = {
-    screens: {
-      Home: '',
-      Room: 'room/:roomId',
-    },
-  };
-
-  const linking = {
-    prefixes: ['http://localhost:19006', 'scrum://'],
-    config,
-  };
-
   const [fontsLoaded] = useFonts({
     'Rubik-200': require('../assets/fonts/Rubik/Rubik-Black.ttf'),
     'Rubik-300': require('../assets/fonts/Rubik/Rubik-Light.ttf'),
@@ -67,7 +41,6 @@ function App() {
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
-      console.log('fonts loaded')
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded])
@@ -77,9 +50,7 @@ function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer linking={linking} ref={navigationContainerRef}>
-        {fontsLoaded && <HomeStack />}
-      </NavigationContainer>
+      <Navigation fontsLoaded={fontsLoaded} />
       <ClientConfiguration />
     </GestureHandlerRootView>
   );

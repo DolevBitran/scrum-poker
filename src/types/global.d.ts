@@ -63,7 +63,6 @@ declare global {
     }
 
     interface RoomState {
-        navigator: NavigationContainerRef<{ Home: React.FC, Room: React.FC }> | null;
         socket: Socket | null;
         id: string | null;
         name: string | null;
