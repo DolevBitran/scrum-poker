@@ -22,7 +22,7 @@ if (Platform.OS !== 'web') {
     I18nManager.swapLeftAndRightInRTL(false);
 }
 
-interface ICreateMenuProps {
+interface ICreateRoomMenuProps {
     roomRef: React.MutableRefObject<{
         roomId: string,
         roomName: string,
@@ -33,7 +33,7 @@ interface ICreateMenuProps {
     snapPoints: number[];
 }
 
-const CreateMenu = ({ roomRef, bottomSheetRef, snapPoints }: ICreateMenuProps) => {
+const CreateRoomMenu = ({ roomRef, bottomSheetRef, snapPoints }: ICreateRoomMenuProps) => {
     const animationRef = React.useRef<LottieRefCurrentProps | null>(null);
     const roomNameInputRef = React.useRef<TextInput>(null);
 
@@ -97,7 +97,7 @@ const CreateMenu = ({ roomRef, bottomSheetRef, snapPoints }: ICreateMenuProps) =
     );
 }
 
-export default CreateMenu;
+export default CreateRoomMenu;
 
 const styles = StyleSheet.create({
     createButton: {
