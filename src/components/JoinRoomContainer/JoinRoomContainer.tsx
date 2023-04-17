@@ -75,17 +75,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-end'
     },
-    // textInputWrapper: {
-    //     display: 'flex',
-    //     justifyContent: 'center',
-    //     borderColor: 'black',
-    //     borderStyle: 'solid',
-    //     borderWidth: 1,
-    //     borderRadius: 14,
-    //     marginVertical: 10,
-    //     paddingHorizontal: 10,
-    //     paddingVertical: 5,
-    // },
     textInputWrapper: {
         backgroundColor: '#fff',
         paddingHorizontal: 5,
