@@ -2,10 +2,10 @@ import { SpringValue } from '@react-spring/native';
 import React from 'react';
 
 export type IGuestProps = {
-    guest: IGuest,
-    controller: any,
-    index: number,
-    style: { opacity: SpringValue<number> }
+    guest: IGuest;
+    controller: any;
+    index: number;
+    style: { opacity: SpringValue<number> };
 }
 
 const Guest: React.FC<IGuestProps> = ({ guest, style, controller, index }) => {

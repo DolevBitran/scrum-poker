@@ -3,12 +3,14 @@ import { useSelector } from 'react-redux';
 import { getRoom } from '../../store/selectors/room.selector';
 
 import Header from '../components/Header';
+import DeckBuilder from '../views/DeckBuilder';
 import Home from '../views/Home';
 import Room from '../views/Room';
 
 type HomeStackParamList = {
     Home: undefined;
     Room: { roomId: string };
+    DeckBuilder: undefined;
 };
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
@@ -26,6 +28,7 @@ export default function HomeStack() {
         }}>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Room" component={Room} initialParams={{ roomId: room?.id }} />
+            <Stack.Screen name="DeckBuilder" component={DeckBuilder} />
         </Stack.Navigator>
     );
 }

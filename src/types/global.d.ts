@@ -17,6 +17,12 @@ declare global {
     // ==================== TYPES ====================
 
 
+    type AppNavigationContainer = NavigationContainerRef<{
+        Home: React.FC;
+        Room: React.FC;
+        DeckBuilder: React.FC;
+    }>
+
     interface SocketEvent {
         name: string;
         handler: () => unknown;
@@ -59,11 +65,11 @@ declare global {
     type ISummaryData = { [id: IGuest['id']]: Vote[] }
 
     interface AppState {
+        navigator: Navigation | null
         room: ROOM_MODE
     }
 
     interface RoomState {
-        navigator: NavigationContainerRef<{ Home: React.FC, Room: React.FC }> | null;
         socket: Socket | null;
         id: string | null;
         name: string | null;
