@@ -8,7 +8,7 @@ import ActiveScrums from '../components/ActiveScrums';
 import ScrumHistory from '../components/ScrumHistory';
 import { useSelector } from 'react-redux';
 import { getGuestName } from '../../store/selectors/room.selector';
-import CreateBottomSheet from '../components/CreateBottomSheet';
+import CreateMenu from '../components/CreateMenu';
 import JoinRoomContainer from '../components/JoinRoomContainer';
 
 const windowWidth = Dimensions.get('window').width;
@@ -57,7 +57,7 @@ export default function Home() {
                 <ScrumHistory onCreateRoomPressed={onCreateButtonPressed} />
             </ScrollView>
             {/* BottomSheet */}
-            <CreateBottomSheet roomRef={roomRef} bottomSheetRef={bottomSheetRef} snapPoints={snapPoints} />
+            <CreateMenu roomRef={roomRef} bottomSheetRef={bottomSheetRef} snapPoints={snapPoints} />
             {/* Status Bar */}
             < StatusBar style="auto" />
         </View >

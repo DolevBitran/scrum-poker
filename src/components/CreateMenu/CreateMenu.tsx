@@ -22,7 +22,7 @@ if (Platform.OS !== 'web') {
     I18nManager.swapLeftAndRightInRTL(false);
 }
 
-interface ICreateBottomSheetProps {
+interface ICreateMenuProps {
     roomRef: React.MutableRefObject<{
         roomId: string,
         roomName: string,
@@ -33,7 +33,7 @@ interface ICreateBottomSheetProps {
     snapPoints: number[];
 }
 
-const CreateBottomSheet = ({ roomRef, bottomSheetRef, snapPoints }: ICreateBottomSheetProps) => {
+const CreateMenu = ({ roomRef, bottomSheetRef, snapPoints }: ICreateMenuProps) => {
     const animationRef = React.useRef<LottieRefCurrentProps | null>(null);
     const roomNameInputRef = React.useRef<TextInput>(null);
 
@@ -97,7 +97,7 @@ const CreateBottomSheet = ({ roomRef, bottomSheetRef, snapPoints }: ICreateBotto
     );
 }
 
-export default CreateBottomSheet;
+export default CreateMenu;
 
 const styles = StyleSheet.create({
     createButton: {
