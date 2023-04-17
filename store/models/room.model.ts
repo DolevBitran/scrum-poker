@@ -112,6 +112,7 @@ export const room: any = createModel<RootModel>()({
                 room_data.push(['admin_secret', admin_secret]);
             }
             await AsyncStorage.multiSet(room_data);
+            // dispatch.app.navigateTo('Room')
             state.app.navigator.dispatch(CommonActions.navigate({ name: 'Room' }));
 
         },

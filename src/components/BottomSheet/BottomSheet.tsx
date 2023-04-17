@@ -11,7 +11,7 @@ type BottomSheetProps = {
     children?: React.ReactNode;
     snapPoints: any[];
     isDraggable?: boolean;
-    style?: ViewStyle
+    style?: ViewStyle;
 };
 
 export type BottomSheetRefProps = {

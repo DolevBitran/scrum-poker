@@ -3,7 +3,7 @@ import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import Text from '../Text';
 
 interface IScrumHistoryProps {
-    onCreateRoomPressed: () => void
+    onCreateRoomPressed: () => void;
 }
 
 

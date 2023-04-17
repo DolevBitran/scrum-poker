@@ -59,6 +59,7 @@ declare global {
     type ISummaryData = { [id: IGuest['id']]: Vote[] }
 
     interface AppState {
+        navigator: Navigation | null
         room: ROOM_MODE
     }
 

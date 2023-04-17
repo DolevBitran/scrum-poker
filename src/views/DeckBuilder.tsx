@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text } from 'react-native';
 
 interface IDeckBuilder {
-    name: String,
-    value: Number
+    name: string;
+    value: number;
 }
 
 
@@ -16,4 +16,4 @@ const DeckBuilder: React.FC<IDeckBuilder> = () => {
     );
 }
 
-export { DeckBuilder }
+export default DeckBuilder
