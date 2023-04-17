@@ -77,20 +77,10 @@ export const room: any = createModel<RootModel>()({
                 if (guestId && lastRoomId === payload.id) {
                     payload.guestId = guestId;
                 }
-                dispatch.room.setName(payload.guestName);
+                dispatch.room.setName(payload.guestName || state.room.guestName);
                 const response = await SocketManager.joinRoom(payload);
                 await dispatch.room.initializeRoom({ room: response.room, guestId: response.guestId });
                 return state.room.id;
-            } catch (err) {
-                console.error(err);
-            }
-        },
-        // @TODO remove reconnect and use join
-        async reconnect(payload: JoinRoomProps, state: RootModel) {
-            try {
-                const guestId = await AsyncStorage.getItem('guest_id')
-                return await dispatch.room.join({ ...payload, guestName: state.room.guestName, guestId })
-                // @TODO: handle simultaneous connections to same guest
             } catch (err) {
                 console.error(err);
             }

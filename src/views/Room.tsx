@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '../../store';
-import { getRoom } from '../../store/selectors/room.selector';
+import { getGuestName, getRoom } from '../../store/selectors/room.selector';
 
 import Table from '../components/Table';
 import VoteKeyboard from '../components/VoteKeyboard';
@@ -19,6 +19,7 @@ export default function Room({ }) {
     const route = useRoute<RouteProp<{ params: { roomId: string } }, 'params'>>()
     const room = useSelector(getRoom)
     const roomMode = useSelector(getRoomMode)
+    const guestName = useSelector(getGuestName)
     const dispatch = useDispatch<Dispatch>()
 
     const shouldShowTable = roomMode === ROOM_MODE.TABLE
@@ -29,11 +30,10 @@ export default function Room({ }) {
 
     useEffect(() => {
         if (!room.id && route.params?.roomId) {
-            // @TODO remove reconnect and use join
-            dispatch.room.reconnect({ roomId: route.params.roomId })
+            dispatch.room.join({ id: route.params.roomId, guestName })
         }
         return resetRoom
-    }, [])
+    }, []) 
 
     if (!room.id) {
         return null
