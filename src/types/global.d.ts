@@ -17,6 +17,12 @@ declare global {
     // ==================== TYPES ====================
 
 
+    type AppNavigationContainer = NavigationContainerRef<{
+        Home: React.FC;
+        Room: React.FC;
+        DeckBuilder: React.FC;
+    }>
+
     interface SocketEvent {
         name: string;
         handler: () => unknown;

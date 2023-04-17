@@ -10,19 +10,15 @@ interface INavgiationProps {
 }
 
 const Navigation: React.FC<INavgiationProps> = ({ fontsLoaded }) => {
-    const navigationContainerRef = useRef<NavigationContainerRef<{
-        Home: React.FC;
-        Room: React.FC;
-        DeckBuilder: React.FC;
-    }>>(null)
-
+    const navigationContainerRef = useRef<AppNavigationContainer>(null)
     const dispatch = useDispatch<Dispatch>();
 
     React.useEffect(() => {
         if (navigationContainerRef.current) {
-            dispatch.room.init(navigationContainerRef.current)
+            dispatch.app.initNavigator(navigationContainerRef.current);
         }
     }, [navigationContainerRef.current])
+
     const config = {
         screens: {
             Home: '',

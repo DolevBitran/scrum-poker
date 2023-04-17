@@ -24,8 +24,11 @@ export const app: any = createModel<RootModel>()({
             this.SET_ROOM_MODE(payload)
             return state.app.room;
         },
-        async navigateTo(payload: string, state: AppState) {
-            state.navigator.dispatch(CommonActions.navigate({ name: payload }))
+        initNavigator(payload: AppNavigationContainer) {
+            this.SET_NAVIGATOR(payload);
+        },
+        navigateTo(payload: string, state: RootModel) {
+            state.app.navigator.dispatch(CommonActions.navigate({ name: payload }))
         }
     }),
 });

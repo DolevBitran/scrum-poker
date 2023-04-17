@@ -58,7 +58,6 @@ export const room: any = createModel<RootModel>()({
     effects: (dispatch: Dispatch) => ({
         async init(payload: AppState['navigator'], state: RootModel) {
             const guestName = await AsyncStorage.getItem('guest_name');
-            dispatch.app.SET_NAVIGATOR(payload);
             this.SET_GUEST_NAME(guestName);
 
             return state.app.navigator;
@@ -112,8 +111,8 @@ export const room: any = createModel<RootModel>()({
                 room_data.push(['admin_secret', admin_secret]);
             }
             await AsyncStorage.multiSet(room_data);
-            // dispatch.app.navigateTo('Room')
-            state.app.navigator.dispatch(CommonActions.navigate({ name: 'Room' }));
+            dispatch.app.navigateTo('Room')
+            // state.app.navigator.dispatch(CommonActions.navigate({ name: 'Room' }));
 
         },
         async vote(payload: VoteProps, state: RootModel) {

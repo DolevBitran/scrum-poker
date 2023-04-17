@@ -1,13 +1,11 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-interface IDeckBuilder {
-    name: string;
-    value: number;
+interface IDeckBuilderProps {
 }
 
 
-const DeckBuilder: React.FC<IDeckBuilder> = () => {
+const DeckBuilder: React.FC<IDeckBuilderProps> = () => {
 
     return (
         <View>
