@@ -7,6 +7,7 @@ import { RoomToolbar } from './RoomToolbar';
 import { UpperHeader } from './UpperHeader';
 import { useSelector } from 'react-redux';
 import { getRoom } from '../../../store/selectors/room.selector';
+import Text from '../Text';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -26,7 +27,7 @@ const Header: React.FC<IHeaderProps> = ({ }) => {
             case isOnRoomView:
                 return `${room.name} -- ${room.id}`
             default:
-                return 'Scrum Poker'
+                return null;// 'Scrum Poker'
         }
     }, [route.name, room])
 
@@ -41,6 +42,10 @@ const Header: React.FC<IHeaderProps> = ({ }) => {
         }
     }
 
+    const BigHeaderComponent = () => <View>
+        <Text style={{ fontSize: 30, color: '#4B536E' }}>Scrum Poker</Text>
+    </View>
+
     return (
         <View style={styles.headerWrapper} >
             <View style={styles.headerContainer}>
@@ -51,9 +56,10 @@ const Header: React.FC<IHeaderProps> = ({ }) => {
                     rightHeaderAction={isOnRoomView ? HEADER_ACTIONS.MENU : null}
                 />
                 {/* Bottom Header Component */}
-                {isOnRoomView && <RoomToolbar />}
+                {/* Big Header Heading */}
+                {isOnRoomView ? <RoomToolbar /> : <BigHeaderComponent />}
             </View>
-        </View>
+        </View >
     );
 }
 

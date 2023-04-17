@@ -9,7 +9,7 @@ const windowHeight = Dimensions.get('window').height;
 type HeaderActionType = { icon: JSX.Element; onPress?: () => void; onLongPress?: () => void; }
 
 export type IUpperHeaderProps = {
-    headerText: string;
+    headerText: string | null;
     leftHeaderAction: HeaderActionType | null;
     rightHeaderAction: HeaderActionType | null;
 }
@@ -19,7 +19,7 @@ const UpperHeader: React.FC<IUpperHeaderProps> = ({ leftHeaderAction, rightHeade
     return (
         <View style={styles.upperHeader}>
             <HeaderActionsContainer style={{ alignContent: 'flex-start' }} icon={leftHeaderAction?.icon} onPress={leftHeaderAction?.onPress} />
-            <HeaderTitle title={headerText} />
+            {headerText && <HeaderTitle title={headerText} />}
             <HeaderActionsContainer style={{ alignContent: 'flex-end' }} icon={rightHeaderAction?.icon} onPress={rightHeaderAction?.onPress} />
         </View>
     );

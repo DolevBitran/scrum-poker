@@ -45,11 +45,6 @@ export const room: any = createModel<RootModel>()({
             ...state,
             guests: [...state.guests.filter(guest => guest.id !== payload.id), payload]
         }),
-        // APPEND_GUEST: (state: RoomState, payload: IGuest): RoomState => ({ ...state, guests: [...state.guests, payload] }),
-        // REMOVE_GUEST: (state: RoomState, payload: IGuest['id']): RoomState => ({
-        //     ...state,
-        //     guests: state.guests.filter((guest) => guest.id !== payload),
-        // }),
         APPEND_VOTE: (state: RoomState, payload: { guestId: IGuest['id'], value: number }): RoomState => ({ ...state, currentRound: { ...state.currentRound, [payload.guestId]: payload.value } }),
         NEW_ROUND: (state: RoomState, payload: IRound): RoomState => ({ ...state, roundsHistory: [...state.roundsHistory, payload], currentRound: {} }),
         SET_NAVIGATOR: (state: RoomState, payload: RoomState['navigator']): RoomState => ({ ...state, navigator: payload }),

@@ -1,21 +1,15 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Dimensions, TouchableOpacity, TextInput, I18nManager, Platform, ScrollView, useStateDimensions } from 'react-native';
+import { StyleSheet, View, Dimensions, I18nManager, Platform, ScrollView } from 'react-native';
 
-import Lottie from '../components/Lottie';
-import { LottieRefCurrentProps } from 'lottie-react';
-
-import Text from '../components/Text';
-import BottomSheet from '../components/BottomSheet';
 import { BottomSheetRefProps } from '../components/BottomSheet/BottomSheet';
 
 import ActiveScrums from '../components/ActiveScrums';
 import ScrumHistory from '../components/ScrumHistory';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { Dispatch, iRootState } from '../../store';
-import { GestureResponderEvent } from 'react-native';
+import { useSelector } from 'react-redux';
 import { getGuestName } from '../../store/selectors/room.selector';
+import CreateBottomSheet from '../components/CreateBottomSheet';
+import JoinRoomContainer from '../components/JoinRoomContainer';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -27,13 +21,7 @@ if (Platform.OS !== 'web') {
 }
 
 export default function Home() {
-    const navigation = useNavigation()
-    const animationRef = React.useRef<LottieRefCurrentProps | null>(null);
     const bottomSheetRef = React.useRef<BottomSheetRefProps>(null);
-    const roomNameInputRef = React.useRef<TextInput>(null);
-    const guestNameInputRef = React.useRef<TextInput>(null);
-    const joinRoomInputRef = React.useRef<TextInput>(null);
-
     const roomRef = React.useRef({
         roomId: '',
         roomName: '',
@@ -49,28 +37,8 @@ export default function Home() {
         }
     }, [guestName])
 
-
-    const dispatch = useDispatch<Dispatch>()
-
-    const { loading, success, error } = useSelector(
-        (rootState: iRootState) => rootState.loading.models.room
-    )
-
     const snapPoints = [0, 0.5]
     const onCreateButtonPressed = () => bottomSheetRef.current && bottomSheetRef.current.scrollTo(snapPoints[1])
-    const onCreateRoomSubmit = async (e: GestureResponderEvent) => {
-        const { roomName, guestName, options } = roomRef.current
-        if (roomName && guestName) {
-            await dispatch.room.create({ roomName, hostName: guestName, options })
-            // const roomId = await dispatch.room.create()
-        }
-    }
-    const onJoinRoom = async () => {
-        const { roomId, guestName } = roomRef.current
-        if (roomId && guestName) {
-            await dispatch.room.join({ id: roomId, guestName })
-        }
-    }
 
     const bodyScrollViewProps = {
         style: styles.body,
@@ -80,78 +48,16 @@ export default function Home() {
         bounces: false
     }
 
-    const Loading = () => <View style={{ alignItems: 'center' }}>
-        <Lottie
-            animationRef={animationRef}
-            style={{ width: windowWidth * 0.4 }}
-            source={require('../../assets/lottie/loader.native.json')}
-            autoPlay
-            loop
-        />
-    </View>
-
-    const Join = () => <View style={{
-        width: '80%',
-        borderRadius: 18,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'green',
-        alignSelf: 'center',
-        marginBottom: 30,
-        paddingVertical: 10
-    }}>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-            <View>
-                <View style={{ backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 2, marginBottom: 10 }}>
-                    <TextInput defaultValue={guestName} ref={guestNameInputRef} onChangeText={text => roomRef.current.guestName = text} placeholder='Guest Name' />
-                </View>
-                <View style={{ backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 2 }}>
-                    <TextInput ref={joinRoomInputRef} onChangeText={text => roomRef.current.roomId = text} placeholder='Room ID' />
-                </View>
-            </View>
-            <TouchableOpacity onPress={onJoinRoom}>
-                <Text>Join</Text>
-            </TouchableOpacity>
-        </View>
-    </View>
-
     return (
         <View style={styles.container}>
             {/* Body */}
             <ScrollView {...bodyScrollViewProps} >
-                <Join />
+                <JoinRoomContainer roomRef={roomRef} />
                 <ActiveScrums />
                 <ScrumHistory onCreateRoomPressed={onCreateButtonPressed} />
             </ScrollView>
-            <BottomSheet ref={bottomSheetRef} snapPoints={snapPoints}>
-                <View style={{ width: '80%', alignSelf: 'center' }}>
-                    {loading ?
-                        <Loading /> :
-                        <>
-                            <View style={styles.textInputWrapper}>
-                                <TextInput
-                                    ref={roomNameInputRef}
-                                    onChangeText={text => roomRef.current.roomName = text}
-                                    placeholder='Room name'
-                                    style={[styles.textInput, Platform.select({
-                                        web: { outlineWidth: 0 },
-                                    })]} />
-
-                            </View>
-
-                            <View style={{ backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 2, marginBottom: 10 }}>
-                                <TextInput defaultValue={guestName} onChangeText={text => roomRef.current.guestName = text} placeholder='Guest Name' />
-                            </View>
-
-                            <Text style={styles.textInput}>Cards styles</Text>
-                            <Text style={styles.textInput}>Show average</Text>
-                            <Text style={styles.textInput}>Show score</Text>
-                            <TouchableOpacity style={styles.createButton} onPress={onCreateRoomSubmit}>
-                                <Text style={styles.createText}>Create</Text>
-                            </TouchableOpacity>
-                        </>}
-                </View>
-            </BottomSheet >
+            {/* BottomSheet */}
+            <CreateBottomSheet roomRef={roomRef} bottomSheetRef={bottomSheetRef} snapPoints={snapPoints} />
             {/* Status Bar */}
             < StatusBar style="auto" />
         </View >
