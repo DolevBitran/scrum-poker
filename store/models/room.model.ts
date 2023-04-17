@@ -2,7 +2,6 @@ import { createModel } from '@rematch/core';
 import { RootModel } from './index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dispatch } from '..';
-import { CommonActions } from '@react-navigation/native';
 import SocketManager from '../../src/services/SocketManager';
 import { ROOM_MODE } from '../../src/constants/constants';
 
@@ -112,7 +111,6 @@ export const room: any = createModel<RootModel>()({
             }
             await AsyncStorage.multiSet(room_data);
             dispatch.app.navigateTo('Room')
-            // state.app.navigator.dispatch(CommonActions.navigate({ name: 'Room' }));
 
         },
         async vote(payload: VoteProps, state: RootModel) {
