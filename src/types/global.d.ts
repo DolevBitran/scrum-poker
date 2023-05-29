@@ -59,11 +59,15 @@ declare global {
     type DeckType = ICard[]
 
     interface IRoomOptions {
-        deck?: DeckType;
+        deck?: IDeck
     }
 
     type ISummaryData = { [id: IGuest['id']]: Vote[] }
 
+    interface IDeck {
+        name: string,
+        cards: ICard[]
+    }
     interface AppState {
         navigator: Navigation | null
         room: ROOM_MODE
@@ -81,12 +85,19 @@ declare global {
         selectedCardIndex: number | null;
     }
 
-
+    interface DecksManagerState {
+        cards: Icard [];
+        deckName: string;
+        userDecks: IDeck[];
+        selectedDeckIdx: number | null,
+        cardBeingCreated: Icard | null
+    }
     // ==================== PAYLOADS ====================
 
     interface CreateRoomProps {
         hostName: string;
         roomName: string;
+        deck: IDeck;
     }
 
     interface JoinRoomProps {
