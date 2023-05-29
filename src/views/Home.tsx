@@ -1,16 +1,18 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Dimensions, I18nManager, Platform, ScrollView } from 'react-native';
+import { StyleSheet, View, Dimensions, I18nManager, Platform, ScrollView, Text } from 'react-native';
 
 import { BottomSheetRefProps } from '../components/BottomSheet/BottomSheet';
 
 import ActiveScrums from '../components/ActiveScrums';
 import ScrumHistory from '../components/ScrumHistory';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getGuestName } from '../../store/selectors/room.selector';
 import CreateRoomMenu from '../components/CreateRoomMenu';
 import JoinRoomContainer from '../components/JoinRoomContainer';
-
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Dispatch } from '../../store'
+import { SCREENS_NAMES } from '../constants/constants'
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -28,6 +30,11 @@ export default function Home() {
         guestName: '',
         options: {},
     })
+    const dispatch = useDispatch<Dispatch>();
+
+    const onCreateDeckClicked = () => {
+        dispatch.app.navigateTo(SCREENS_NAMES.DECK_BUILDER);
+    }
 
     const guestName = useSelector(getGuestName)
 
@@ -52,6 +59,9 @@ export default function Home() {
         <View style={styles.container}>
             {/* Body */}
             <ScrollView {...bodyScrollViewProps} >
+                <TouchableOpacity onPress={onCreateDeckClicked}>
+                    <Text>Deck Builder</Text>
+                </TouchableOpacity>
                 <JoinRoomContainer roomRef={roomRef} />
                 <ActiveScrums />
                 <ScrumHistory onCreateRoomPressed={onCreateButtonPressed} />

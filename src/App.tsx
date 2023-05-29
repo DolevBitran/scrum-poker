@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useDispatch } from 'react-redux';
 import { store } from '../store';
+import { Dispatch } from '../store';
 
 
 SplashScreen.preventAutoHideAsync()
@@ -38,6 +39,9 @@ function App() {
     'Rubik-600': require('../assets/fonts/Rubik/Rubik-SemiBold.ttf'),
     'Rubik-700': require('../assets/fonts/Rubik/Rubik-Bold.ttf'),
   })
+
+  const dispatch = useDispatch<Dispatch>();
+  dispatch.decksManager.loadDecksFromLocalStorage();
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
